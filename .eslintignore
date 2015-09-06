@@ -1,0 +1,5 @@
+# Ignore any installed node modules.
+**/node_modules/**
+
+# Ignore test coverage reports
+coverage/**
