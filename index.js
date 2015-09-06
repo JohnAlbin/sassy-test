@@ -69,7 +69,17 @@ module.exports = {
       }
 
       // Run node-sass' render().
-      sass.render(options, callback);
+      sass.render(options, function(error, result) {
+        if (result) {
+          // Convert sass' result.css buffer to a string.
+          result.css = result.css.toString();
+          // Convert sass' sourcemap string to a JSON object.
+          if (result.map) {
+            result.map = JSON.parse(result.map.toString());
+          }
+        }
+        callback(error, result);
+      });
     } catch (err) {
       console.log(err, err.stack.split('\n'));
       callback(err, null);
@@ -121,13 +131,6 @@ module.exports = {
 
     // Do a sass.render() on the input.scss file.
     this.render(options, function(error, result) {
-      if (result) {
-        // Convert sass' result.css buffer to a string.
-        result.css = result.css.toString();
-        // Convert sass' sourcemap string to a JSON object.
-        result.map = JSON.parse(result.map.toString());
-      }
-
       results.result = result;
       results.sassError = error;
 
