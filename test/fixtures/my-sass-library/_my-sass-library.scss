@@ -1,0 +1,32 @@
+// My Sass library
+//
+// This is an example Sass library to be tested with Sassy Test.
+
+$my-sass-library: true !default;
+
+// Returns "yep" or "nope" if this is my Sass.
+@function my-sass($yep: $my-sass-library) {
+  @return if($yep, "yep", "nope");
+}
+
+// Reports an "oh my" error if Takei is true.
+@function oh-my($takei: true) {
+  @if $takei {
+    @error "Ohhhhh myyyyy";
+  }
+  @else {
+    @warn "meh.";
+  }
+}
+
+@mixin my-meta() {
+  .meta & {
+    @content;
+  }
+}
+
+@mixin my-sass-imported() {
+  .test {
+    content: "my-sass-imported";
+  }
+}

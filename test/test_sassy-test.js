@@ -71,7 +71,16 @@ describe('sassy-test', function() {
 
   describe('.render()', function() {
     it('should be able to @import from the fixtures directory');
-    it('should be able to @import from the library directory');
+
+    it('should be able to @import from the library directory', function(done) {
+      sassyTest.render({
+        data: '@import "my-sass-library";\n@include my-sass-imported();'
+      }, function(err, result) {
+        result.css.should.equal('.test {\n  content: "my-sass-imported"; }\n');
+        done();
+      });
+    });
+
     it('should pass its options to node-sass’s render()');
     it('should pass its callback to node-sass’s render()');
     it('should catch errors and return it back to the callback');
