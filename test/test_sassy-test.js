@@ -2,9 +2,11 @@
 
 /* eslint-disable no-unused-vars */
 var should = require('chai').should(),
-  sassyTest = require('../'),
   path = require('path');
 /* eslint-enable no-unused-vars */
+
+// Simulate sassy-test being installed in node-modules/sassy-test/.
+var sassyTest = require('./fixtures/node-modules-sassy-test');
 
 sassyTest.configurePaths({
   fixtures: path.join(__dirname, 'fixtures'),
@@ -27,9 +29,38 @@ describe('sassy-test', function() {
   });
 
   describe('.configurePaths()', function() {
-    it('should not override the default fixtures path');
-    it('should set the fixtures path');
-    it('should set the library path');
+    it('should not override the default fixtures path', function(done) {
+      path.relative(
+        path.join(__dirname, '../'),
+        sassyTest.paths.fixtures
+      ).should.equal('test/fixtures');
+      done();
+    });
+
+    it('should set the fixtures path', function(done) {
+      sassyTest.configurePaths({
+        fixtures: 'a/path'
+      });
+      sassyTest.paths.fixtures.should.equal('a/path');
+      done();
+    });
+
+    it('should set the library path', function(done) {
+      sassyTest.configurePaths({
+        library: 'b/path'
+      });
+      sassyTest.paths.library.should.equal('b/path');
+      done();
+    });
+
+    after(function(done) {
+      // Reset the paths for the rest of the tests.
+      sassyTest.configurePaths({
+        fixtures: path.join(__dirname, 'fixtures'),
+        library: path.join(__dirname, 'fixtures/my-sass-library')
+      });
+      done();
+    });
   });
 
   describe('.fixture()', function() {
