@@ -1,5 +1,6 @@
 # Exclude stuff specific to this project.
 node_modules
+coverage
 
 # Exclude IDE management files.
   # Eclipse

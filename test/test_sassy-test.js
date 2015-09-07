@@ -83,8 +83,8 @@ describe('sassy-test', function() {
     });
 
     it('should pass its options to node-sass’s render()');
-    it('should pass its callback to node-sass’s render()');
-    it('should catch errors and return it back to the callback');
+    it('should return the node-sass result object');
+    it('should return the node-sass error');
   });
 
   describe('.renderFixture()', function() {
