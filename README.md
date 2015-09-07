@@ -5,6 +5,8 @@
 
 Sassy Test is a simple helper utility for creating unit tests of Sass modules. Works great with mocha or jasmine.
 
+Install for your Sass module with: `npm install --save-dev sassy-test`
+
 ## Development
 
 Forking, hacking, and tearing apart of this software is welcome! It's still very simple and could use additional features and conveniences.
