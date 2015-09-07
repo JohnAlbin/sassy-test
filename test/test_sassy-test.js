@@ -1,17 +1,10 @@
 'use strict';
 
 /* eslint-disable no-unused-vars */
-var should = require('chai').should(),
-  path = require('path');
+var path = require('path'),
+  sassyTest = require('../lib/sassy-test.js'),
+  should = require('chai').should();
 /* eslint-enable no-unused-vars */
-
-// Simulate sassy-test being installed in node-modules/sassy-test/.
-var sassyTest = require('./fixtures/node-modules-sassy-test');
-
-sassyTest.configurePaths({
-  fixtures: path.join(__dirname, 'fixtures'),
-  library: path.join(__dirname, 'fixtures/my-sass-library')
-});
 
 describe('sassy-test', function() {
   describe('API', function() {
@@ -31,8 +24,16 @@ describe('sassy-test', function() {
   describe('.configurePaths()', function() {
     it('should not override the default fixtures path', function(done) {
       path.relative(
-        path.join(__dirname, '../'),
+        path.join(__dirname, '../../../'),
         sassyTest.paths.fixtures
+      ).should.equal('test/fixtures');
+
+      // Simulate sassy-test being installed in node-modules/sassy-test/.
+      var sassyTestMock = require('./fixtures/node_modules/sassy-test-mock');
+
+      path.relative(
+        path.join(__dirname, '../'),
+        sassyTestMock.paths.fixtures
       ).should.equal('test/fixtures');
       done();
     });
