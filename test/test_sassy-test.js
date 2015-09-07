@@ -82,20 +82,103 @@ describe('sassy-test', function() {
   });
 
   describe('.render()', function() {
-    it('should be able to @import from the fixtures directory');
+    it('should be able to @import from the fixtures directory', function(done) {
+      sassyTest.render({
+        data: '@import "init";\n.test {\n  content: $var-from-init;\n}'
+      }, function(error, result) {
+        result.css.should.equal('.test {\n  content: "a variable from fixtures/_init.scss"; }\n');
+        done();
+      });
+    });
 
     it('should be able to @import from the library directory', function(done) {
       sassyTest.render({
         data: '@import "my-sass-library";\n@include my-sass-imported();'
-      }, function(err, result) {
+      }, function(error, result) {
         result.css.should.equal('.test {\n  content: "my-sass-imported"; }\n');
         done();
       });
     });
 
-    it('should pass its options to node-sass’s render()');
-    it('should return the node-sass result object');
-    it('should return the node-sass error');
+    it('should fail to @import if no library directory specified', function(done) {
+      var originalLibraryPath = sassyTest.paths.library;
+      sassyTest.paths.library = '';
+      sassyTest.render({
+        data: '@import "my-sass-library";'
+      }, function(error, result) {
+        error.should.exist;
+        should.not.exist(result);
+        // Restore the original value.
+        sassyTest.paths.library = originalLibraryPath;
+        done();
+      });
+    });
+
+    it('should pass its options to node-sass’s render()', function(done) {
+      sassyTest.render({
+        data: '@import "my-sass-library";\n@include my-sass-imported();',
+        outputStyle: 'compressed'
+      }, function(error, result) {
+        result.css.should.equal('.test{content:"my-sass-imported"}\n');
+        done();
+      });
+    });
+
+    it('should return the node-sass result object', function(done) {
+      sassyTest.render({
+        data: '@import "my-sass-library";\n@include my-sass-imported();'
+      }, function(error, result) {
+        should.not.exist(error);
+        result.should.be.object;
+        result.should.have.property('css');
+        result.css.should.be.string;
+        result.should.have.property('map');
+        should.not.exist(result.map);
+        result.should.have.property('stats');
+        result.css.should.be.object;
+        done();
+      });
+    });
+
+    it('should return the node-sass error', function(done) {
+      sassyTest.render({
+        data: '@import "non-existant-sass-library";'
+      }, function(error, result) {
+        should.not.exist(result);
+        error.should.be.error;
+        error.should.have.property('message');
+        error.message.should.be.string;
+        error.should.have.property('column');
+        error.column.should.be.number;
+        error.should.have.property('line');
+        error.line.should.be.number;
+        error.should.have.property('file');
+        error.file.should.be.string;
+        error.should.have.property('status');
+        error.status.should.be.number;
+        done();
+      });
+    });
+
+    it('should convert the sourcemap into an object', function(done) {
+      sassyTest.render({
+        file: sassyTest.fixture('render/some-file.scss'),
+        sourceMap: true,
+        outFile: sassyTest.fixture('render/output.css')
+      }, function(error, result) {
+        should.not.exist(error);
+        result.map.should.be.object;
+        done();
+      });
+    });
+
+    it('should throw an error if not given an options object', function(done) {
+      sassyTest.render('', function(error, result) {
+        should.not.exist(result);
+        error.should.be.error;
+        done();
+      });
+    });
   });
 
   describe('.renderFixture()', function() {
