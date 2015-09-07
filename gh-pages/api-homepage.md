@@ -1,6 +1,7 @@
 # sassy-test API<br><small>version: `master` branch</small>
 
-This is the JavaScript API documentation for the sassy-test software.
+This is the JavaScript API documentation for the sassy-test software. [The code
+for sassy-test](https://github.com/JohnAlbin/sassy-test) is available on GitHub.
 
 The core sassy-test API can be imported with:
 
