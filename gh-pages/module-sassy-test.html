@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>sassy-test JavaScript API: Module: sassy-test</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Module: sassy-test</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        
+            
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>The core sassy-test API can be imported with:</p>
+<pre class="prettyprint source"><code>var sassyTest = require('sassy-test');</code></pre></div>
+        
+
+        
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line8">line 8</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".configurePaths"><span class="type-signature">(static) </span>configurePaths<span class="signature">(config)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Configures the paths needed for the sassyTest object.</p>
+<pre class="prettyprint source"><code>var sassyTest = require('sassy-test');
+sassyTest.configurePaths({
+  fixtures: '/my/path/to/fixtures',
+  library: '/my/path/to/library'
+});</code></pre><p>If sassy-test is installed in node_modules and your test fixtures are in
+<code>./test/fixtures</code> (relative to the root of your project), then sassy-test
+will automatically configure the <code>fixtures</code> path without you having to set
+<code>fixtures</code> with <code>configurePaths()</code>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>config</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A configuration object containing the properties:
+  <code>fixtures</code> and <code>library</code>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line46">line 46</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".fixture"><span class="type-signature">(static) </span>fixture<span class="signature">(&hellip;path)</span><span class="type-signature"> &rarr; {string}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Returns the full path to the requested test fixture.</p>
+<p>When called without any parameters, this method returns the path to the
+test fixtures directory. If one or more parameters are given, the method
+will append them to the returned path.</p>
+<pre class="prettyprint source"><code>var sassyTest = require('sassy-test');
+
+// Returns full path to the test fixtures.
+var fixturePath = sassyTest.fixture();
+// Returns full path to fixtures/sub-folder.
+var fixturePath = sassyTest.fixture('sub-folder');
+// Returns full path to fixtures/sub-folder/_file.scss.
+var fixturePath = sassyTest.fixture('sub-folder', '_file.scss');</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Optional paths inside the fixtures directory.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line75">line 75</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The path to the requested test fixture.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".render"><span class="type-signature">(static) </span>render<span class="signature">(options, callback)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Runs node-sass' render() with a light weight wrapper.</p>
+<p>In addition to running node-sass' render(), this method:</p>
+<ul>
+<li>adds the test fixtures path directory to the includePaths</li>
+<li>adds the library path to the includePaths</li>
+<li>converts render.css from a buffer to a string</li>
+<li>converts render.map to an object (if you configured the proper sourcemap
+options)</li>
+</ul>
+<pre class="prettyprint source"><code>var sassyTest = require('sassy-test');
+
+describe('a test suite', function() {
+  it('should test something', function(done) {
+    var options = {
+      data: '@import &quot;init&quot;; // Imports fixtures/_init.scss.'
+    };
+    sassyTest.render(options, function(error, result) {
+      assert.ifError(error);
+      assert.ok(result.css);
+    });
+    done();
+  });
+});</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The options to pass to node-sass' render(). For
+  the full list of options, see the <a href="https://github.com/sass/node-sass#options">node-sass documentation for
+  &quot;options&quot;</a>.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>An asynchronous callback with the signature of
+  <code>function(error, result)</code>. In error conditions, the error argument is
+  populated with the error object. In success conditions, the result object
+  is populated with an object describing the result of the render call. For
+  full details, see the <a href="https://github.com/sass/node-sass#error-object">node-sass documentation for the error and result
+  objects</a>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line119">line 119</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".renderFixture"><span class="type-signature">(static) </span>renderFixture<span class="signature">(fixtureDirectory, options, callback)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Renders the test fixture and returns the result.</p>
+<p>Looks inside the specified folder in test/fixtures, renders the input.scss
+file and reads the output.css file. If no Sass error occurs, it compares
+the results to the expected output using <code>assert.strictEqual()</code>.</p>
+<p>renderFixture() does not test for errors itself; it requires the callback
+to decide if a Sass error is a test failure or not. Good Sass libraries
+should <code>@error</code> if used incorrectly and sassy-test lets you see these
+errors and assert they were the expected result.</p>
+<pre class="prettyprint source"><code>var sassyTest = require('sassy-test');
+
+describe('a test suite', function() {
+  it('should test something', function(done) {
+    var options = {
+      data: '@import &quot;init&quot;; // Imports fixtures/_init.scss.'
+    };
+    sassyTest.renderFixture('sometest', options, function(error, result) {
+      // If there was no error, renderFixture() has already compared
+      // the rendered output of fixtures/sometest/input.scss to
+      // fixtures/sometest/output.css.
+      assert.ifError(error);
+    });
+    done();
+  });
+});</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fixtureDirectory</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The path (relative to the fixtures base
+  directory) to the fixture to test.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The options to pass to node-sass' render(). For
+  the full list of options, see the <a href="https://github.com/sass/node-sass#options">node-sass documentation for
+  &quot;options&quot;</a>.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>An asynchronous callback with the signature of
+  <code>function(error, result)</code>. In error conditions, the error argument is
+  populated with the error object. In success conditions, the result object
+  is populated with an object describing the result of the render call. For
+  full details, see the <a href="https://github.com/sass/node-sass#error-object">node-sass documentation for the error and result
+  objects</a>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line190">line 190</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-sassy-test.html">sassy-test</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Mon Sep 07 2015 12:27:30 GMT+0800 (CST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
