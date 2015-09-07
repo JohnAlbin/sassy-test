@@ -65,9 +65,20 @@ describe('sassy-test', function() {
   });
 
   describe('.fixture()', function() {
-    it('should return the path to the fixtures directory');
-    it('should return the path to the sub-directory of fixtures');
-    it('should accept multiple arguments');
+    it('should return the path to the fixtures directory', function(done) {
+      sassyTest.fixture().should.equal(path.join(__dirname, 'fixtures'));
+      done();
+    });
+
+    it('should return the path to the sub-directory of fixtures', function(done) {
+      sassyTest.fixture('fixture').should.equal(path.join(__dirname, 'fixtures/fixture'));
+      done();
+    });
+
+    it('should accept multiple arguments', function(done) {
+      sassyTest.fixture('fixture', 'sassy-test-mock.js').should.equal(path.join(__dirname, 'fixtures/fixture/sassy-test-mock.js'));
+      done();
+    });
   });
 
   describe('.render()', function() {
