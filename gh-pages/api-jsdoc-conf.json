@@ -1,0 +1,21 @@
+{
+  "source": {
+    "include": [
+      "lib"
+    ],
+    "exclude": []
+  },
+  "opts": {
+    "destination": "./gh-pages/",
+    "readme": "./gh-pages/api-homepage.md",
+    "recurse": true,
+    "verbose": true
+  },
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "templates": {},
+  "tags": {
+    "allowUnknownTags": false
+  }
+}
