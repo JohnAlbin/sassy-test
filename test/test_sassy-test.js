@@ -54,6 +54,15 @@ describe('sassy-test', function() {
       done();
     });
 
+    it('should not reset to the default value a previously set library path', function(done) {
+      sassyTest.configurePaths({
+        library: 'c/path'
+      });
+      sassyTest.configurePaths({});
+      sassyTest.paths.library.should.equal('c/path');
+      done();
+    });
+
     after(function(done) {
       // Reset the paths for the rest of the tests.
       sassyTest.configurePaths({
