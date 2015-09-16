@@ -235,6 +235,7 @@ describe('sassy-test', function() {
         error.should.be.error;
         error.should.have.property('message');
         error.message.should.be.string;
+        error.message.should.equal('renderFixture failure.');
         error.should.have.property('column');
         error.column.should.be.number;
         error.should.have.property('line');
@@ -243,6 +244,17 @@ describe('sassy-test', function() {
         error.file.should.be.string;
         error.should.have.property('status');
         error.status.should.be.number;
+        done();
+      });
+    });
+
+    it('should ignore the output error and return the node-sass error', function(done) {
+      sassyTest.renderFixture('renderFixture/failureNoOutput', {}, function(error, result, expectedOutput) {
+        should.not.exist(result);
+        should.not.exist(expectedOutput);
+        error.should.be.error;
+        error.message.should.equal('renderFixture failure, not an output error.');
+        error.should.not.have.property('code');
         done();
       });
     });
