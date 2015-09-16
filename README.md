@@ -52,12 +52,13 @@ before(function(done) {
     // Path to the Sass module we are testing.
     library: path.join(__dirname, '../sass')
     // Since our fixtures are in test/fixtures, we don't need to override
-    // the default value by setting the "fixtures" path here. For more
-    // info, see the [`configurePaths()` docs](http://johnalbin.github.io/sassy-test/module-sassy-test.html#.configurePaths).
+    // the default value by setting the "fixtures" path here.
   });
   done();
 });
 ```
+
+For more information, see the [`configurePaths()` documentation](http://johnalbin.github.io/sassy-test/module-sassy-test.html#.configurePaths).
 
 Then our test file, test_mymodule.js:
 
@@ -89,7 +90,7 @@ describe('@import "mymodule";', function() {
         // @error in your module, you should expect the error object to exist
         // and to contain the error message from your module.
         error.should.exist;
-        error.message.should.equal("Some helpful error message from your module.");
+        error.message.should.equal('Some helpful error message from your module.');
         done();
       });
     });
