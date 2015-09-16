@@ -29,7 +29,10 @@ Example project's root directory:
   │ ├─┬ my-modules-function/
   │ │ ├── input.scss
   │ │ └── output.css
-  │ └─┬ my-modules-error/
+  │ ├─┬ my-modules-error/
+  │ │ ├── input.scss
+  │ │ └── output.css
+  │ └─┬ my-modules-warn/
   │   ├── input.scss
   │   └── output.css
   ├── helper.js
@@ -77,7 +80,7 @@ describe('@import "mymodule";', function() {
         // that no error occurred and then done(), but we can run other tests
         // here if we desire; both expectedOutput (the contents of output.css)
         // and node-sass's result object are available.
-        if (error) throw error;
+        should.not.exist(error);
         done();
       });
     });
@@ -91,6 +94,21 @@ describe('@import "mymodule";', function() {
         // and to contain the error message from your module.
         error.should.exist;
         error.message.should.equal('Some helpful error message from your module.');
+        done();
+      });
+    });
+
+    it('should warn in another situation', function(done) {
+      // Sassy Test's renderFixture() can also test if your module produces an
+      // intentional warning message with Sass' @warn directive.
+      sassyTest.renderFixture('my-modules-warn', {}, function(error, result, expectedOutput) {
+        // If the Sass in test/fixtures/my-modules-warn/input.scss triggers a
+        // @warn in your module, you should expect the result object to exist
+        // and to contain the warn message from your module.
+        should.not.exist(error);
+        // Sassy Test adds two new arrays to node-sass' result object:
+        // result.warn and result.debug are arrays of strings.
+        result.warn[0].should.equal('Some helpful warning from your module.');
         done();
       });
     });
