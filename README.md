@@ -15,8 +15,8 @@ Sassy Test will work with any Node.js test runner, like mocha or jasmine.
 
 Example project's root directory:
 ```
-|   # You can put your module's Sass files anywhere,
-|   # we use "sass" as an example.
+|   # You can put your module's Sass files anywhere.
+|   # We use "sass" as an example.
 ├─┬ sass/
 │ └── _mymodule.scss
 │   # Mocha prefers your tests to live in a "test" folder.
@@ -36,7 +36,7 @@ Example project's root directory:
   └── test_mymodule.scss
 ```
 
-With mocha, we can place a call to `before()` in the root of any test file and it will be run once before all the other tests in every test_*.js file. We can also `require()` files and assign them to the `global` object to make them available to all test_*.js files. A file called helper.js can be used to set up our mocha global requires and `before()`:
+With mocha, we can place a call to `before()` in the root of any test file and it will be run once before all the other tests in every `test_*.js` file. We can also `require()` files and assign them to the `global` object to make them available to all `test_*.js` files. A file called helper.js can be used to set up our mocha global requires and `before()`:
 
 ```JavaScript
 'use strict';
