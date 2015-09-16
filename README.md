@@ -1,17 +1,17 @@
 [![Build Status](https://secure.travis-ci.org/JohnAlbin/sassy-test.png?branch=master)](http://travis-ci.org/JohnAlbin/sassy-test) [![Coverage Status](https://coveralls.io/repos/JohnAlbin/sassy-test/badge.svg?branch=master&service=github)](https://coveralls.io/github/JohnAlbin/sassy-test?branch=master)
 
 
-# sassy-test
+# Sassy Test
 
 Sassy Test is a simple helper utility for creating unit tests of Sass modules.
 
-Sassy Test models its testing after the unit tests in LibSass. LibSass has series of sub-folders in its "test/fixtures" directory that contain an "input" Sass file and an "output" CSS file. Its unit tests then reference a particular folder, render the input.scss and compare the results to the output.css.
+Sassy Test models its testing after the unit tests in LibSass. LibSass has a series of sub-folders in its "test/fixtures" directory that contain an "input" Sass file and an "output" CSS file. Its unit tests then reference a particular folder, render the input.scss and compare the results to the output.css file.
 
 To get started, just install Sassy Test as a development dependency of your Sass module with: `npm install --save-dev sassy-test`
 
-Sassy Tests will work with any Node.js test runner, like mocha or jasmine.
+Sassy Test will work with any Node.js test runner, like mocha or jasmine.
 
-## A quick demo of Mocha + SassyTest
+## A quick demo of Mocha + Sassy Test
 
 Example project's root directory:
 ```
@@ -20,7 +20,7 @@ Example project's root directory:
 ├─┬ sass/
 │ └── _mymodule.scss
 │   # Mocha prefers your tests to live in a "test" folder.
-│   # SassyTest will automatically find your fixtures if
+│   # Sassy Test will automatically find your fixtures if
 │   # they are in /test/fixtures, but you can change the
 │   # path with configurePaths().
 └─┬ test/
@@ -36,7 +36,7 @@ Example project's root directory:
   └── test_mymodule.scss
 ```
 
-With mocha, we can place call to `before()` in the root of any test file and it will be run once before all the other tests in all the test_*.js files. We can also `require()` files and assign them to the `global` object to make them available to all test_*.js files. A file called helper.js can be used to set up our mocha global requires and `before()`:
+With mocha, we can place a call to `before()` in the root of any test file and it will be run once before all the other tests in every test_*.js file. We can also `require()` files and assign them to the `global` object to make them available to all test_*.js files. A file called helper.js can be used to set up our mocha global requires and `before()`:
 
 ```JavaScript
 'use strict';
@@ -60,7 +60,7 @@ before(function(done) {
 
 For more information, see the [`configurePaths()` documentation](http://johnalbin.github.io/sassy-test/module-sassy-test.html#.configurePaths).
 
-Then our test file, test_mymodule.js:
+Then in our test file, test_mymodule.js, we can use `sassyTest` to simplify our tests:
 
 ```JavaScript
 'use strict';
@@ -68,7 +68,7 @@ Then our test file, test_mymodule.js:
 describe('@import "mymodule";', function() {
   describe('@function my-modules-function()', function() {
     it('should test an aspect of this function', function(done) {
-      // SassyTest's renderFixture() will run a comparison test between the
+      // Sassy Test's renderFixture() will run a comparison test between the
       // rendered input.scss and the output.css found in the fixtures
       // sub-directory specified in its first parameter, in this case:
       // test/fixtures/my-modules-function
@@ -83,7 +83,7 @@ describe('@import "mymodule";', function() {
     });
 
     it('should throw an error in this situation', function(done) {
-      // SassyTest's renderFixture() can also test if your module produces an
+      // Sassy Test's renderFixture() can also test if your module produces an
       // intentional error with Sass' @error directive.
       sassyTest.renderFixture('my-modules-error', {}, function(error, result, expectedOutput) {
         // If the Sass in test/fixtures/my-modules-error/input.scss triggers an
