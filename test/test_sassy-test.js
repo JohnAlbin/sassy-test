@@ -145,6 +145,10 @@ describe('sassy-test', function() {
         should.not.exist(result.map);
         result.should.have.property('stats');
         result.css.should.be.object;
+        result.should.have.property('warn');
+        result.warn.should.be.array;
+        result.should.have.property('debug');
+        result.debug.should.be.array;
         done();
       });
     });
@@ -185,6 +189,26 @@ describe('sassy-test', function() {
       sassyTest.render('', function(error, result) {
         should.not.exist(result);
         error.should.be.error;
+        done();
+      });
+    });
+
+    it('should capture @warn messages', function(done) {
+      sassyTest.render({
+        file: sassyTest.fixture('render/some-warn.scss')
+      }, function(error, result) {
+        should.not.exist(error);
+        result.warn[0].should.equal('render() test warning');
+        done();
+      });
+    });
+
+    it('should capture @debug messages', function(done) {
+      sassyTest.render({
+        file: sassyTest.fixture('render/some-debug.scss')
+      }, function(error, result) {
+        should.not.exist(error);
+        result.debug[0].should.equal('render() test debug');
         done();
       });
     });
