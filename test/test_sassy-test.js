@@ -2,6 +2,7 @@
 
 /* eslint-disable no-unused-vars */
 var path = require('path'),
+  sass = require('node-sass'),
   sassyTest = require('../lib/sassy-test.js'),
   should = require('chai').should();
 /* eslint-enable no-unused-vars */
@@ -129,6 +130,21 @@ describe('sassy-test', function() {
         outputStyle: 'compressed'
       }, function(error, result) {
         result.css.should.equal('.test{content:"my-sass-imported"}\n');
+        done();
+      });
+    });
+
+    it('should not override functions passed to it', function(done) {
+      sassyTest.render({
+        data: '.test { content: test-function(MYTEST); }',
+        outputStyle: 'compressed',
+        functions: {
+          'test-function($val)': function(val) {
+            return sass.types.String('"You have called test-function(' + val.getValue() + ')."');
+          }
+        }
+      }, function(error, result) {
+        result.css.should.equal('.test{content:"You have called test-function(MYTEST)."}\n');
         done();
       });
     });
