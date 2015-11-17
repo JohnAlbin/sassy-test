@@ -52,8 +52,11 @@ global.sassyTest = require('sassy-test');
 // This before() is run before any test_*.js file.
 before(function(done) {
   sassyTest.configurePaths({
-    // Path to the Sass module we are testing.
-    library: path.join(__dirname, '../sass')
+    // Path to the Sass module we are testing and its dependencies.
+    includePaths: [
+      path.join(__dirname, '../sass'),
+      path.join(__dirname, '../node_modules/breakpoint-sass/stylesheets'
+    ]
     // Since our fixtures are in test/fixtures, we don't need to override
     // the default value by setting the "fixtures" path here.
   });

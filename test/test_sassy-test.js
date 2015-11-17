@@ -47,20 +47,20 @@ describe('sassy-test', function() {
       done();
     });
 
-    it('should set the library path', function(done) {
+    it('should set the includePaths path', function(done) {
       sassyTest.configurePaths({
-        library: 'b/path'
+        includePaths: ['b/path']
       });
-      sassyTest.paths.library.should.equal('b/path');
+      sassyTest.paths.includePaths[0].should.equal('b/path');
       done();
     });
 
-    it('should not reset to the default value a previously set library path', function(done) {
+    it('should not reset to the default value a previously set includePaths path', function(done) {
       sassyTest.configurePaths({
-        library: 'c/path'
+        includePaths: ['c/path']
       });
       sassyTest.configurePaths({});
-      sassyTest.paths.library.should.equal('c/path');
+      sassyTest.paths.includePaths[0].should.equal('c/path');
       done();
     });
 
@@ -68,7 +68,7 @@ describe('sassy-test', function() {
       // Reset the paths for the rest of the tests.
       sassyTest.configurePaths({
         fixtures: path.join(__dirname, 'fixtures'),
-        library: path.join(__dirname, 'fixtures/my-sass-library')
+        includePaths: [path.join(__dirname, 'fixtures/my-sass-library')]
       });
       done();
     });
@@ -101,7 +101,7 @@ describe('sassy-test', function() {
       });
     });
 
-    it('should be able to @import from the library directory', function(done) {
+    it('should be able to @import from the includePaths directory', function(done) {
       sassyTest.render({
         data: '@import "my-sass-library";\n@include my-sass-imported();'
       }, function(error, result) {
@@ -110,16 +110,16 @@ describe('sassy-test', function() {
       });
     });
 
-    it('should fail to @import if no library directory specified', function(done) {
-      var originalLibraryPath = sassyTest.paths.library;
-      sassyTest.paths.library = '';
+    it('should fail to @import if no includePaths directory specified', function(done) {
+      var originalIncludePaths = sassyTest.paths.includePaths;
+      sassyTest.paths.includePaths = [];
       sassyTest.render({
         data: '@import "my-sass-library";'
       }, function(error, result) {
         error.should.exist;
         should.not.exist(result);
         // Restore the original value.
-        sassyTest.paths.library = originalLibraryPath;
+        sassyTest.paths.includePaths = originalIncludePaths;
         done();
       });
     });
