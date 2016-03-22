@@ -22,12 +22,12 @@
     "node-sass": "^3.3.2"
   },
   "devDependencies": {
-    "chai": "^3.4.1",
-    "coveralls": "^2.11.4",
+    "chai": "^3.5.0",
+    "coveralls": "^2.11.8",
     "eslint": "^2.4.0",
-    "istanbul": "^0.4.0",
-    "jsdoc": "^3.3.3",
-    "mocha": "^2.3.4"
+    "istanbul": "^0.4.2",
+    "jsdoc": "^3.4.0",
+    "mocha": "^2.4.5"
   },
   "scripts": {
     "test": "istanbul cover _mocha",
