@@ -6,8 +6,6 @@
   "rules": {
     "max-nested-callbacks": [2, 4],
     // Disabled.
-    // This rule doesn't like var should = require('chai').should();
-    "no-mixed-requires": 0,
     // Chai assertions are "unused" expressions.
     "no-unused-expressions": 0
   }
