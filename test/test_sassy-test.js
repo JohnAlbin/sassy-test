@@ -2,8 +2,15 @@
 
 var expect = require('chai').expect,
   path = require('path'),
-  sass = require('node-sass'),
+  sass = require('node-sass');
+
+// Node.js 0.12 gets the Babel-transformed lib/* version.
+var SassyTest;
+if (Number.parseInt(process.versions.node.split('.')[0]) < 1) {
   SassyTest = require('../lib/sassy-test.js');
+} else {
+  SassyTest = require('../src/sassy-test.js');
+}
 
 describe('sassy-test', function() {
   describe('API', function() {
