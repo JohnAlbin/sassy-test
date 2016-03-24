@@ -28,9 +28,9 @@ describe('sassy-test', function() {
     });
   });
 
-  describe('KssStyleGuide constructor', function() {
+  describe('SassyTest constructor', function() {
     it('should initialize the object', function(done) {
-      let obj = new SassyTest();
+      var obj = new SassyTest();
       expect(obj).to.have.property('paths');
       expect(obj.paths).to.have.property('fixtures');
       expect(obj.paths.fixtures).to.equal(path.join(__dirname, '../../../', 'test/fixtures'));
@@ -39,7 +39,7 @@ describe('sassy-test', function() {
     });
 
     it('should initialize the given data', function(done) {
-      let obj = new SassyTest({
+      var obj = new SassyTest({
         fixtures: 'example',
         includePaths: ['include-example']
       });
