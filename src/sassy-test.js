@@ -28,9 +28,9 @@ var assert = require('assert'),
  */
 class SassyTest {
   /**
-   * Constructs a SassyTest object.
+   * Creates a SassyTest object.
    *
-   * @param {Object} [config] Optional initialization object.
+   * @param {object} [config] Optional initialization object.
    */
   constructor(config) {
     config = config || {};
