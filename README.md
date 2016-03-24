@@ -46,8 +46,9 @@ With mocha, we can place a call to `before()` in the root of any test file and i
 
 // Globals for all test_*.js files.
 global.path = require('path');
-global.should = require('chai').should();
-global.sassyTest = require('sassy-test');
+global.expect = require('chai').expect;
+global.SassyTest = require('sassy-test');
+global.sassyTest = new SassyTest();
 
 // This before() is run before any test_*.js file.
 before(function(done) {
