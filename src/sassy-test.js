@@ -1,9 +1,11 @@
 'use strict';
 
-var assert = require('assert'),
-  fs = require('fs'),
+const assert = require('assert'),
   path = require('path'),
-  sass = require('node-sass');
+  Promise = require('bluebird');
+
+const fs = Promise.promisifyAll(require('fs')),
+  sass = Promise.promisifyAll(require('node-sass'));
 
 /**
  * A sassy-test helper object can be created with:
@@ -106,18 +108,23 @@ class SassyTest {
   }
 
   /**
-   * Runs node-sass' render() with a light weight wrapper.
+   * Runs node-sass' render() with a light-weight wrapper.
    *
    * In addition to running node-sass' render(), this method:
    * - adds the test fixtures path directory to the includePaths
    * - ensures the includePaths are passed to node-sass
-   * - converts render.css from a buffer to a string
-   * - converts render.map to an object (Note: you will need to configure the
-   *   proper sourcemap options)
-   * - Captures messages generated with `@warn` and puts them in an array stored
-   *   in render.warn.
-   * - Captures messages generated with `@debug` and puts them in an array
-   *   stored in render.debug.
+   *
+   * And sassy-test modifies the [node-sass result
+   * object](https://github.com/sass/node-sass#result-object) by
+   * - converting the `css` property from a buffer to a string
+   * - converting the `map` property from a buffer to an object (Note: you will
+   *   need to configure the proper sourcemap options before node-sass will add
+   *   a `map` property.)
+   *
+   * Sassy-test also adds the following properties to the node-sass result
+   * object:
+   * - `warn`: An array containing the output of any @warn statements.
+   * - `debug`: An array containing the output of any @debug statements.
    *
    * ```
    * var sassyTest = require('sassy-test');
@@ -130,8 +137,8 @@ class SassyTest {
    *     sassyTest.render(options, function(error, result) {
    *       assert.ifError(error);
    *       assert.ok(result.css);
+   *       done();
    *     });
-   *     done();
    *   });
    * });
    * ```
@@ -139,50 +146,72 @@ class SassyTest {
    * @param {object} options - The options to pass to node-sass' render(). For
    *   the full list of options, see the [node-sass documentation for
    *   "options"](https://github.com/sass/node-sass#options).
-   * @param {function} callback - An asynchronous callback with the signature of
-   *   `function(error, result)`. In error conditions, the error argument is
+   * @param {function} [callback] - An asynchronous callback with the signature
+   *   of `function(error, result)`. In error conditions, the error argument is
    *   populated with the error object. In success conditions, the result object
    *   is populated with an object describing the result of the render call. For
    *   full details, see the [node-sass documentation for the error and result
    *   objects](https://github.com/sass/node-sass#error-object).
+   * @returns {Promise|*} If no `callback` function is given, this method
+   *   returns a Promise that resolves to node-sass' result object.
    */
   render(options, callback) {
-    try {
-      var warn = [],
-        debug = [];
-      options.includePaths = options.includePaths || [];
-      // Add the test fixtures directory.
-      options.includePaths.push(this.fixture());
-      // Add the includePaths to node-sass' include paths.
-      if (this.paths.includePaths.length) {
-        Array.prototype.push.apply(options.includePaths, this.paths.includePaths);
+    if (typeof options !== 'object') {
+      let error = new Error('Options parameter of render method must be an object.');
+      if (callback) {
+        return callback(error, null);
+      } else {
+        return Promise.reject(error);
       }
-      options.functions = options.functions || {};
-      options.functions['@warn'] = function(message) {
-        warn.push(message.getValue());
-        return sass.NULL;
-      };
-      options.functions['@debug'] = function(message) {
-        debug.push(message.getValue());
-        return sass.NULL;
-      };
+    }
 
-      // Run node-sass' render().
+    options.includePaths = options.includePaths || [];
+
+    // Add the test fixtures directory.
+    options.includePaths.push(this.fixture());
+
+    // Add the includePaths to node-sass' include paths.
+    if (this.paths.includePaths.length) {
+      Array.prototype.push.apply(options.includePaths, this.paths.includePaths);
+    }
+
+    // Collect Sass warn() and debug() messages.
+    let warn = [],
+      debug = [];
+    options.functions = options.functions || {};
+    options.functions['@warn'] = function(message) {
+      warn.push(message.getValue());
+      return sass.NULL;
+    };
+    options.functions['@debug'] = function(message) {
+      debug.push(message.getValue());
+      return sass.NULL;
+    };
+
+    let handleResult = (result) => {
+      // Convert sass' result.css buffer to a string.
+      result.css = result.css.toString();
+      // Convert sass' sourcemap string to a JSON object.
+      if (result.map) {
+        result.map = JSON.parse(result.map.toString());
+      }
+      result.warn = warn;
+      result.debug = debug;
+
+      return result;
+    };
+
+    // Run node-sass' render().
+    if (callback) {
       sass.render(options, function(error, result) {
-        if (result) {
-          // Convert sass' result.css buffer to a string.
-          result.css = result.css.toString();
-          // Convert sass' sourcemap string to a JSON object.
-          if (result.map) {
-            result.map = JSON.parse(result.map.toString());
-          }
-          result.warn = warn;
-          result.debug = debug;
+        if (error) {
+          callback(error, null);
+        } else {
+          callback(null, handleResult(result));
         }
-        callback(error, result);
       });
-    } catch (err) {
-      callback(err, null);
+    } else {
+      return sass.renderAsync(options).then(handleResult);
     }
   }
 

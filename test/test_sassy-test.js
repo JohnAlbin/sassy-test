@@ -2,6 +2,7 @@
 
 var expect = require('chai').expect,
   path = require('path'),
+  Promise = require('bluebird'),
   sass = require('node-sass');
 
 // Node.js 0.12 gets the Babel-transformed lib/* version.
@@ -242,10 +243,21 @@ describe('sassy-test', function() {
     });
 
     it('should throw an error if not given an options object', function(done) {
+      var self = this;
       this.sassyTest.render('', function(error, result) {
         expect(result).to.not.exist;
         expect(error).to.be.error;
-        done();
+        expect(error.message).to.equal('Options parameter of render method must be an object.');
+
+        // Make render() return a Promise.
+        return self.sassyTest.render('').then(function(result) {
+          expect(result).to.not.exist;
+          done();
+        }).catch(function(error) {
+          expect(error).to.be.error;
+          expect(error.message).to.equal('Options parameter of render method must be an object.');
+          done();
+        });
       });
     });
 
@@ -266,6 +278,22 @@ describe('sassy-test', function() {
         expect(error).to.not.exist;
         expect(result.debug[0]).to.equal('render() test debug');
         done();
+      });
+    });
+
+    it('should return a Promise if not given a callback', function() {
+      var obj = this.sassyTest.render({
+        data: '@import "my-sass-library";\n@include my-sass-imported();'
+      });
+      expect(obj).to.be.instanceof(Promise);
+      return obj.then(function(result) {
+        expect(result.css).to.equal('.test {\n  content: "my-sass-imported"; }\n');
+        expect(result).to.have.property('warn');
+        expect(result.warn).to.be.array;
+        expect(result).to.have.property('debug');
+        expect(result.debug).to.be.array;
+      }).catch(function(error) {
+        expect(error).to.not.exist;
       });
     });
   });
