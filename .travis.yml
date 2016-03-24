@@ -6,4 +6,5 @@ node_js:
   - '0.12'
   - '4'
   - '5'
-script: npm test && (npm run report-coverage || test 1)
+# Only report coverage on Node.js 4 or later.
+after_script: ./bin/node-has-es6 && npm run report-coverage
