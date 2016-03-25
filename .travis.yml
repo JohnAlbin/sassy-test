@@ -7,5 +7,5 @@ node_js:
   - '4'
   - '5'
 # Only test and report coverage on Node.js 4 or later.
-script: ./bin/node-has-es6 && npm test || ./node_modules/.bin/mocha
+script: ./bin/node-has-es6 && npm test || npm run test-no-coverage
 after_script: ./bin/node-has-es6 && npm run report-coverage
