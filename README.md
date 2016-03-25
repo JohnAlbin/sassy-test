@@ -46,7 +46,7 @@ With mocha, we can place a call to `before()` in the root of any test file and i
 
 // Globals for all test_*.js files.
 global.path = require('path');
-global.should = require('chai').should();
+global.expect = require('chai').expect;
 global.sassyTest = require('sassy-test');
 
 // This before() is run before any test_*.js file.
@@ -83,7 +83,7 @@ describe('@import "mymodule";', function() {
         // that no error occurred and then done(), but we can run other tests
         // here if we desire; both expectedOutput (the contents of output.css)
         // and node-sass's result object are available.
-        should.not.exist(error);
+        expect(error).to.not.exist;
         done();
       });
     });
@@ -95,8 +95,8 @@ describe('@import "mymodule";', function() {
         // If the Sass in test/fixtures/my-modules-error/input.scss triggers an
         // @error in your module, you should expect the error object to exist
         // and to contain the error message from your module.
-        error.should.exist;
-        error.message.should.equal('Some helpful error message from your module.');
+        expect(error).to.exist;
+        expect(error.message).to.equal('Some helpful error message from your module.');
         done();
       });
     });
@@ -108,10 +108,10 @@ describe('@import "mymodule";', function() {
         // If the Sass in test/fixtures/my-modules-warn/input.scss triggers a
         // @warn in your module, you should expect the result object to exist
         // and to contain the warn message from your module.
-        should.not.exist(error);
+        expect(error).to.not.exist;
         // Sassy Test adds two new arrays to node-sass' result object:
         // result.warn and result.debug are arrays of strings.
-        result.warn[0].should.equal('Some helpful warning from your module.');
+        expect(result.warn[0]).to.equal('Some helpful warning from your module.');
         done();
       });
     });
