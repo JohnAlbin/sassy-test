@@ -318,7 +318,7 @@ describe('sassy-test', function() {
     });
 
     it('should return the node-sass error', function(done) {
-      this.sassyTest.renderFixture('renderFixture/failure', {}, function(error, result, expectedOutput) {
+      this.sassyTest.renderFixture('renderFixture/failureSass', {}, function(error, result, expectedOutput) {
         expect(result).to.not.exist;
         expect(expectedOutput).to.exist;
         expect(error).to.be.error;
