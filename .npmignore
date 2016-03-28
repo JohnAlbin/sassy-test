@@ -1,0 +1,9 @@
+coverage/
+gh-pages/
+src/
+test/
+.babelrc
+.eslint*
+.travis.yml
+gh-pages.sh
+Makefile
