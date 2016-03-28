@@ -99,8 +99,7 @@ describe('sassy-test', function() {
 
   describe('.fixture()', function() {
     before(function(done) {
-      this.sassyTest = new SassyTest();
-      this.sassyTest.configurePaths({
+      this.sassyTest = new SassyTest({
         fixtures: path.join(__dirname, 'fixtures')
       });
       done();
@@ -124,8 +123,7 @@ describe('sassy-test', function() {
 
   describe('.render()', function() {
     before(function(done) {
-      this.sassyTest = new SassyTest();
-      this.sassyTest.configurePaths({
+      this.sassyTest = new SassyTest({
         fixtures: path.join(__dirname, 'fixtures'),
         includePaths: [path.join(__dirname, 'fixtures/my-sass-library')]
       });
@@ -298,13 +296,52 @@ describe('sassy-test', function() {
     });
   });
 
+  describe('.assertResult()', function() {
+    it('should not throw an error if result.sassError exists', function(done) {
+      var sassyTest = new SassyTest(),
+        result = {
+          sassError: new Error('Sass error'),
+          expectedOutputFileError: new Error('Test output error'),
+          css: '.output {}',
+          expectedOutput: '.output {}'
+        };
+      expect(sassyTest.assertResult.bind(null, result)).to.not.throw(Error, 'Test output error');
+      done();
+    });
+
+    it('should throw an error if result.expectedOutputFileError exists', function(done) {
+      var sassyTest = new SassyTest(),
+        result = {
+          sassError: null,
+          expectedOutputFileError: new Error('Test output error'),
+          css: '.output {}',
+          expectedOutput: '.output {}'
+        };
+      expect(sassyTest.assertResult.bind(null, result)).to.throw(Error, 'Test output error');
+      done();
+    });
+
+    it('should throw an error if result.css does not match result.expectedOutput', function(done) {
+      var sassyTest = new SassyTest(),
+        result = {
+          sassError: null,
+          expectedOutputFileError: null,
+          css: '.output {}',
+          expectedOutput: '.output.does-not-match {}'
+        };
+      expect(sassyTest.assertResult.bind(null, result)).to.throw(Error, 'AssertionError: \'.output {}\' === \'.output.does-not-match {}\'');
+      done();
+    });
+  });
+
   describe('.renderFixture()', function() {
     before(function(done) {
-      this.sassyTest = new SassyTest();
-      this.sassyTest.configurePaths({
+      this.sassyTest = new SassyTest({
         fixtures: path.join(__dirname, 'fixtures'),
         includePaths: [path.join(__dirname, 'fixtures/my-sass-library')]
       });
+      // Turn off the assertions to prevent errors from breaking these tests.
+      this.sassyTest.assertResult = function() {};
       done();
     });
 
@@ -347,7 +384,7 @@ describe('sassy-test', function() {
 
     it('should return the node-sass error', function(done) {
       this.sassyTest.renderFixture('renderFixture/failureSass', {}, function(error, result, expectedOutput) {
-        expect(result).to.not.exist;
+        expect(result.css).to.not.exist;
         expect(expectedOutput).to.exist;
         expect(error).to.be.error;
         expect(error).to.have.property('message');
@@ -367,7 +404,7 @@ describe('sassy-test', function() {
 
     it('should ignore the output error and return the node-sass error', function(done) {
       this.sassyTest.renderFixture('renderFixture/failureNoOutput', {}, function(error, result, expectedOutput) {
-        expect(result).to.not.exist;
+        expect(result.css).to.not.exist;
         expect(expectedOutput).to.not.exist;
         expect(error).to.be.error;
         expect(error.message).to.equal('renderFixture failure, not an output error.');
@@ -386,12 +423,10 @@ describe('sassy-test', function() {
       });
     });
 
-    it('should throw an error if it cannot find output.css', function(done) {
-      this.sassyTest.renderFixture('renderFixture/missingOutput', {}, function(error, result, expectedOutput) {
-        expect(error).to.exist;
-        expect(error.code).to.equal('ENOENT');
-        expect(result).to.not.exist;
-        expect(expectedOutput).to.not.exist;
+    it('should report an error if it cannot find output.css', function(done) {
+      this.sassyTest.renderFixture('renderFixture/missingOutput', {}, function(error, result) {
+        expect(result.expectedOutputFileError).to.exist;
+        expect(result.expectedOutputFileError.code).to.equal('ENOENT');
         done();
       });
     });

@@ -216,11 +216,37 @@ class SassyTest {
   }
 
   /**
+   * Runs assertions against `renderFixture()`'s result object.
+   *
+   * The `renderFixture()` automatically calls this method to run a standard set
+   * of assertions against the result object before it is returned. If no Sass
+   * error occurs, `assertResult()` checks for an error when reading the
+   * output.css file using `assert.ifError()` and compares the results to the
+   * expected output using `assert.strictEqual()`.
+   *
+   * If the SassyTest user chooses, this method can be overridden to perform
+   * different assertions.
+   *
+   * @param {object} result The result object returned by `renderFixture()`.
+   */
+  assertResult(result) {
+    // We always return a Sass error, so don't run our assertions if there is
+    // a Sass error.
+    if (!result.sassError) {
+      // A missing output.css file is a hard fail.
+      assert.ifError(result.expectedOutputFileError);
+
+      // Compare the Sass compilation to the expected output file.
+      assert.strictEqual(result.css, result.expectedOutput);
+    }
+  }
+
+  /**
    * Renders the test fixture and returns the result.
    *
    * Looks inside the specified folder in test/fixtures, renders the input.scss
-   * file and reads the output.css file. If no Sass error occurs, it compares
-   * the results to the expected output using `assert.strictEqual()`.
+   * file and reads the output.css file. Before it returns the node-sass result
+   * object, it calls `assertResult()` to run a standard set of assertions.
    *
    * renderFixture() does not test for errors itself; it requires the callback
    * to decide if a Sass error is a test failure or not. Good Sass libraries
@@ -263,29 +289,25 @@ class SassyTest {
   renderFixture(fixtureDirectory, options, callback) {
     options = options || /* istanbul ignore next */ {};
 
-    var results = {
+    var test = {
       completedSassRender: false,
       completedReadFile: false
     };
-    var compareResults = function() {
+    var compareResults = () => {
       // We are waiting for all tasks to complete before completing this task.
-      if (!results.completedSassRender || !results.completedReadFile) {
+      if (!test.completedSassRender || !test.completedReadFile) {
         return;
       }
 
-      // If no errors, compare the Sass compilation to the expected output file.
-      if (!results.sassError && !results.outputError) {
-        assert.strictEqual(results.result.css, results.expectedOutput);
-      }
+      var result = test.result || {};
+      result.sassError = test.sassError;
+      result.expectedOutput = test.expectedOutput;
+      result.expectedOutputFileError = test.expectedOutputFileError;
+
+      this.assertResult(result);
 
       // Give the callback access to the results.
-      if (results.outputError && !results.sassError) {
-        // Ensure the callback notices the output error by removing the sass
-        // result.
-        callback(results.outputError, null, null);
-      } else {
-        callback(results.sassError, results.result, results.expectedOutput);
-      }
+      callback(result.sassError, result, result.expectedOutput);
     };
 
     // Read the test from input.scss file in the specified fixture directory.
@@ -298,26 +320,26 @@ class SassyTest {
 
     // Do a sass.render() on the input.scss file.
     this.render(options, function(error, result) {
-      results.result = result;
-      results.sassError = error;
+      test.result = result;
+      test.sassError = error;
 
       // Declare this task completed.
-      results.completedSassRender = true;
+      test.completedSassRender = true;
       compareResults();
     });
 
     // Read the output.css file.
     fs.readFile(options.outFile, function(error, expectedOutput) {
-      results.outputError = error;
-      results.expectedOutput = expectedOutput;
+      test.expectedOutputFileError = error;
+      test.expectedOutput = expectedOutput;
 
       // Convert fs' data buffer to a string.
       if (!error) {
-        results.expectedOutput = expectedOutput.toString();
+        test.expectedOutput = expectedOutput.toString();
       }
 
       // Declare this task completed.
-      results.completedReadFile = true;
+      test.completedReadFile = true;
       compareResults();
     });
   }
