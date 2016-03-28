@@ -346,19 +346,19 @@ describe('sassy-test', function() {
     });
 
     it('should render the input.scss file of the given fixtures directory', function(done) {
-      this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result, expectedOutput) {
+      this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result) {
         expect(error).to.not.exist;
         expect(result.css).to.be.string;
         expect(result.css).to.equal('.test {\n  content: "renderFixture() test"; }\n');
-        expect(expectedOutput).to.exist;
+        expect(result.expectedOutput).to.exist;
         done();
       });
     });
 
     it('should create a sourcemap', function(done) {
-      this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result, expectedOutput) {
+      this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result) {
         expect(error).to.not.exist;
-        expect(expectedOutput).to.exist;
+        expect(result.expectedOutput).to.exist;
         expect(result.map).to.be.object;
         expect(result.map.file).to.equal('output.css');
         expect(result.map.sources).to.be.array;
@@ -368,9 +368,9 @@ describe('sassy-test', function() {
     });
 
     it('should return the node-sass result object', function(done) {
-      this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result, expectedOutput) {
+      this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result) {
         expect(error).to.not.exist;
-        expect(expectedOutput).to.exist;
+        expect(result.expectedOutput).to.exist;
         expect(result).to.be.object;
         expect(result).to.have.property('css');
         expect(result.css).to.be.string;
@@ -383,9 +383,9 @@ describe('sassy-test', function() {
     });
 
     it('should return the node-sass error', function(done) {
-      this.sassyTest.renderFixture('renderFixture/failureSass', {}, function(error, result, expectedOutput) {
+      this.sassyTest.renderFixture('renderFixture/failureSass', {}, function(error, result) {
         expect(result.css).to.not.exist;
-        expect(expectedOutput).to.exist;
+        expect(result.expectedOutput).to.exist;
         expect(error).to.be.error;
         expect(error).to.have.property('message');
         expect(error.message).to.be.string;
@@ -403,9 +403,9 @@ describe('sassy-test', function() {
     });
 
     it('should ignore the output error and return the node-sass error', function(done) {
-      this.sassyTest.renderFixture('renderFixture/failureNoOutput', {}, function(error, result, expectedOutput) {
+      this.sassyTest.renderFixture('renderFixture/failureNoOutput', {}, function(error, result) {
         expect(result.css).to.not.exist;
-        expect(expectedOutput).to.not.exist;
+        expect(result.expectedOutput).to.not.exist;
         expect(error).to.be.error;
         expect(error.message).to.equal('renderFixture failure, not an output error.');
         expect(error).to.not.have.property('code');
@@ -414,11 +414,11 @@ describe('sassy-test', function() {
     });
 
     it('should read the output.css file of the given fixtures directory', function(done) {
-      this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result, expectedOutput) {
+      this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result) {
         expect(error).to.not.exist;
         expect(result).to.exist;
-        expect(expectedOutput).to.be.string;
-        expect(expectedOutput).to.equal('.test {\n  content: "renderFixture() test"; }\n');
+        expect(result.expectedOutput).to.be.string;
+        expect(result.expectedOutput).to.equal('.test {\n  content: "renderFixture() test"; }\n');
         done();
       });
     });
@@ -432,11 +432,115 @@ describe('sassy-test', function() {
     });
 
     it('should compare the expected result and the actual result', function(done) {
-      this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result, expectedOutput) {
+      this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result) {
         expect(error).to.not.exist;
         expect(result).to.exist;
-        expect(result.css).to.equal(expectedOutput);
+        expect(result.css).to.equal(result.expectedOutput);
         done();
+      });
+    });
+
+    describe('if not given a callback function', function() {
+      it('should return a Promise', function() {
+        var obj = this.sassyTest.renderFixture('renderFixture/success', {});
+        expect(obj).to.be.instanceof(Promise);
+        return obj;
+      });
+
+      it('should render the input.scss file of the given fixtures directory', function() {
+        this.sassyTest.renderFixture('renderFixture/success', {}).catch(function(error) {
+          expect(error).to.not.exist;
+        }).then(function(result) {
+          expect(result.css).to.be.string;
+          expect(result.css).to.equal('.test {\n  content: "renderFixture() test"; }\n');
+          expect(result.expectedOutput).to.exist;
+        });
+      });
+
+      it('should create a sourcemap', function() {
+        this.sassyTest.renderFixture('renderFixture/success').catch(function(error) {
+          expect(error).to.not.exist;
+        }).then(function(result) {
+          expect(result.expectedOutput).to.exist;
+          expect(result.map).to.be.object;
+          expect(result.map.file).to.equal('output.css');
+          expect(result.map.sources).to.be.array;
+          expect(result.map.sources).to.deep.equal(['input.scss']);
+        });
+      });
+
+      it('should return the node-sass result object', function() {
+        this.sassyTest.renderFixture('renderFixture/success', {}).catch(function(error) {
+          expect(error).to.not.exist;
+        }).then(function(result) {
+          expect(result.expectedOutput).to.exist;
+          expect(result).to.be.object;
+          expect(result).to.have.property('css');
+          expect(result.css).to.be.string;
+          expect(result).to.have.property('map');
+          expect(result.map).to.be.object;
+          expect(result).to.have.property('stats');
+          expect(result.css).to.be.object;
+        });
+      });
+
+      it('should return the node-sass error', function() {
+        this.sassyTest.renderFixture('renderFixture/failureSass', {}).then(function(result) {
+          expect(result.css).to.not.exist;
+          expect(result.expectedOutput).to.exist;
+        }).catch(function(error) {
+          expect(error).to.be.error;
+          expect(error).to.have.property('message');
+          expect(error.message).to.be.string;
+          expect(error.message).to.equal('renderFixture failure.');
+          expect(error).to.have.property('column');
+          expect(error.column).to.be.number;
+          expect(error).to.have.property('line');
+          expect(error.line).to.be.number;
+          expect(error).to.have.property('file');
+          expect(error.file).to.be.string;
+          expect(error).to.have.property('status');
+          expect(error.status).to.be.number;
+        });
+      });
+
+      it('should ignore the output error and return the node-sass error', function() {
+        this.sassyTest.renderFixture('renderFixture/failureNoOutput', {}).then(function(result) {
+          expect(result.css).to.not.exist;
+          expect(result.expectedOutput).to.not.exist;
+        }).catch(function(error) {
+          expect(error).to.be.error;
+          expect(error.message).to.equal('renderFixture failure, not an output error.');
+          expect(error).to.not.have.property('code');
+        });
+      });
+
+      it('should read the output.css file of the given fixtures directory', function() {
+        this.sassyTest.renderFixture('renderFixture/success', {}).catch(function(error) {
+          expect(error).to.not.exist;
+        }).then(function(result) {
+          expect(result).to.exist;
+          expect(result.expectedOutput).to.be.string;
+          expect(result.expectedOutput).to.equal('.test {\n  content: "renderFixture() test"; }\n');
+        });
+      });
+
+      it('should report an error if it cannot find output.css', function() {
+        this.sassyTest.renderFixture('renderFixture/missingOutput', {}).catch(function(error) {
+          expect(error).to.not.exist;
+        }).then(function(result) {
+          expect(result.expectedOutputFileError).to.exist;
+          expect(result.expectedOutputFileError.code).to.equal('ENOENT');
+        });
+      });
+
+      it('should compare the expected result and the actual result', function() {
+        this.sassyTest.renderFixture('renderFixture/success', {}).catch(function(error) {
+          expect(error).to.not.exist;
+        }).then(function(result) {
+          expect(result).to.exist;
+          expect(result.css).to.equal(result.expectedOutput);
+        });
       });
     });
   });

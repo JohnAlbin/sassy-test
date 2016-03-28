@@ -148,10 +148,10 @@ class SassyTest {
    *   "options"](https://github.com/sass/node-sass#options).
    * @param {function} [callback] - An asynchronous callback with the signature
    *   of `function(error, result)`. In error conditions, the error argument is
-   *   populated with the error object. In success conditions, the result object
-   *   is populated with an object describing the result of the render call. For
-   *   full details, see the [node-sass documentation for the error and result
-   *   objects](https://github.com/sass/node-sass#error-object).
+   *   populated with the [node-sass error
+   *   object](https://github.com/sass/node-sass#error-object). In success
+   *   conditions, the result object is populated with an object describing the
+   *   result of the render call.
    * @returns {Promise|*} If no `callback` function is given, this method
    *   returns a Promise that resolves to node-sass' result object.
    */
@@ -253,6 +253,22 @@ class SassyTest {
    * should `@error` if used incorrectly and sassy-test lets you see these
    * errors and assert they were the expected result.
    *
+   * Sassy-test modifies the [node-sass result
+   * object](https://github.com/sass/node-sass#result-object) by
+   * - converting the `css` property from a buffer to a string
+   * - converting the `map` property from a buffer to an object (Note: you will
+   *   need to configure the proper sourcemap options before node-sass will add
+   *   a `map` property.)
+   *
+   * Sassy-test also adds the following properties to the node-sass result
+   * object:
+   * - `warn`: An array containing the output of any @warn statements.
+   * - `debug`: An array containing the output of any @debug statements.
+   * - sassError: A node-sass error object which contains @error statements, if
+   *   any.
+   * - expectedOutput: The text of the output.css file; should match the `css`
+   *   property provided by node-sass.
+   *
    * ```
    * var sassyTest = require('sassy-test');
    *
@@ -266,8 +282,8 @@ class SassyTest {
    *       // the rendered output of fixtures/sometest/input.scss to
    *       // fixtures/sometest/output.css.
    *       assert.ifError(error);
+   *       done();
    *     });
-   *     done();
    *   });
    * });
    * ```
@@ -277,38 +293,17 @@ class SassyTest {
    * @param {object} options - The options to pass to node-sass' render(). For
    *   the full list of options, see the [node-sass documentation for
    *   "options"](https://github.com/sass/node-sass#options).
-   * @param {function} callback - An asynchronous callback with the signature of
-   *   `function(error, result, expectedOutput)`. The expectedOutput is always
-   *   given the contents of the output.css file in the specified fixture. In
-   *   error conditions, the error argument is populated with the error object.
-   *   In success conditions, the result object is populated with an object
-   *   describing the result of the render call. For full details, see the
-   *   [node-sass documentation for the error and result
-   *   objects](https://github.com/sass/node-sass#error-object).
+   * @param {function} [callback] - An asynchronous callback with the signature
+   *   of `function(error, result)`. In error conditions, the error argument is
+   *   populated with the [node-sass error
+   *   object](https://github.com/sass/node-sass#error-object). In success
+   *   conditions, the result object is populated with an object describing the
+   *   result of the render call.
+   * @returns {Promise|*} If no `callback` function is given, this method
+   *   returns a Promise that resolves to node-sass' result object.
    */
   renderFixture(fixtureDirectory, options, callback) {
     options = options || /* istanbul ignore next */ {};
-
-    var test = {
-      completedSassRender: false,
-      completedReadFile: false
-    };
-    var compareResults = () => {
-      // We are waiting for all tasks to complete before completing this task.
-      if (!test.completedSassRender || !test.completedReadFile) {
-        return;
-      }
-
-      var result = test.result || {};
-      result.sassError = test.sassError;
-      result.expectedOutput = test.expectedOutput;
-      result.expectedOutputFileError = test.expectedOutputFileError;
-
-      this.assertResult(result);
-
-      // Give the callback access to the results.
-      callback(result.sassError, result, result.expectedOutput);
-    };
 
     // Read the test from input.scss file in the specified fixture directory.
     options.file = this.fixture(fixtureDirectory, 'input.scss');
@@ -318,30 +313,89 @@ class SassyTest {
     options.omitSourceMapUrl = true;
     options.outFile = this.fixture(fixtureDirectory, 'output.css');
 
-    // Do a sass.render() on the input.scss file.
-    this.render(options, function(error, result) {
-      test.result = result;
-      test.sassError = error;
+    let test = {
+      result: null,
+      sassError: null,
+      expectedOutput: null,
+      expectedOutputFileError: null
+    };
 
-      // Declare this task completed.
-      test.completedSassRender = true;
-      compareResults();
-    });
+    let handleResult = (test) => {
+      // Move our properties into the node-sass result object.
+      let result = test.result || {};
+      result.sassError = test.sassError;
+      result.expectedOutput = test.expectedOutput;
+      result.expectedOutputFileError = test.expectedOutputFileError;
 
-    // Read the output.css file.
-    fs.readFile(options.outFile, function(error, expectedOutput) {
-      test.expectedOutputFileError = error;
-      test.expectedOutput = expectedOutput;
+      this.assertResult(result);
 
-      // Convert fs' data buffer to a string.
-      if (!error) {
-        test.expectedOutput = expectedOutput.toString();
-      }
+      return result;
+    };
 
-      // Declare this task completed.
-      test.completedReadFile = true;
-      compareResults();
-    });
+    if (callback) {
+      test.completedSassRender = false;
+      test.completedReadFile = false;
+
+      var compareResults = () => {
+        // We are waiting for all tasks to complete before completing this task.
+        if (!test.completedSassRender || !test.completedReadFile) {
+          return;
+        }
+
+        // Give the callback access to the results.
+        callback(test.sassError, handleResult(test));
+      };
+
+      // Do a sass.render() on the input.scss file.
+      this.render(options, function(error, result) {
+        test.result = result;
+        test.sassError = error;
+
+        // Declare this task completed.
+        test.completedSassRender = true;
+        compareResults();
+      });
+
+      // Read the output.css file.
+      fs.readFile(options.outFile, function(error, expectedOutput) {
+        test.expectedOutputFileError = error;
+        test.expectedOutput = expectedOutput;
+
+        // Convert fs' data buffer to a string.
+        if (!error) {
+          test.expectedOutput = expectedOutput.toString();
+        }
+
+        // Declare this task completed.
+        test.completedReadFile = true;
+        compareResults();
+      });
+    } else {
+      return Promise.all([
+        // Do a sass.render() on the input.scss file.
+        this.render(options).catch(error => {
+          test.sassError = error;
+          return Promise.resolve(null);
+        }).then(result => {
+          test.result = result;
+          return Promise.resolve();
+        }),
+
+        // Read the output.css file.
+        fs.readFileAsync(options.outFile).catch(error => {
+          test.expectedOutputFileError = error;
+          return Promise.resolve(null);
+        }).then(expectedOutput => {
+          if (expectedOutput) {
+            // Convert fs' data buffer to a string.
+            test.expectedOutput = expectedOutput.toString();
+          }
+          return Promise.resolve();
+        })
+      ]).then(() => {
+        return Promise.resolve(handleResult(test));
+      });
+    }
   }
 }
 
