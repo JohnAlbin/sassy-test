@@ -57,6 +57,14 @@ var sassyTest = new SassyTest();</code></pre></div>
 
 <div class="description">
     <p>Creates a SassyTest object.</p>
+<p>If the optional initialization object is given to the constructor, it will
+be passed to the <code>configurePaths()</code> method.</p>
+<p>For example, this:</p>
+<pre class="prettyprint source"><code>var SassyTest = require('sassy-test');
+var sassyTest = new SassyTest({includePaths: ['/my/path/to/library']});</code></pre><p>is equivalent to:</p>
+<pre class="prettyprint source"><code>var SassyTest = require('sassy-test');
+var sassyTest = new SassyTest();
+sassyTest.configurePaths({includePaths: ['/my/path/to/library']});</code></pre>
 </div>
 
 
@@ -317,7 +325,7 @@ different assertions.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line232">line 232</a>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line250">line 250</a>
     </li></ul></dd>
     
 
@@ -356,7 +364,8 @@ different assertions.</p>
 
 <div class="description">
     <p>Configures the paths needed for the sassyTest object.</p>
-<pre class="prettyprint source"><code>var sassyTest = require('sassy-test');
+<pre class="prettyprint source"><code>var SassyTest = require('sassy-test');
+var sassyTest = new SassyTest();
 sassyTest.configurePaths({
   fixtures: '/my/path/to/fixtures',
   includePaths: ['/my/path/to/library']
@@ -457,7 +466,7 @@ will automatically configure the <code>fixtures</code> path without you having t
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line71">line 71</a>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line87">line 87</a>
     </li></ul></dd>
     
 
@@ -499,7 +508,8 @@ will automatically configure the <code>fixtures</code> path without you having t
 <p>When called without any parameters, this method returns the path to the
 test fixtures directory. If one or more parameters are given, the method
 will append them to the returned path.</p>
-<pre class="prettyprint source"><code>var sassyTest = require('sassy-test');
+<pre class="prettyprint source"><code>var SassyTest = require('sassy-test');
+var sassyTest = new SassyTest();
 
 // Returns full path to the test fixtures.
 var fixturePath = sassyTest.fixture();
@@ -611,7 +621,7 @@ var fixturePath = sassyTest.fixture('sub-folder', '_file.scss');</code></pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line103">line 103</a>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line120">line 120</a>
     </li></ul></dd>
     
 
@@ -691,7 +701,8 @@ object:</p>
 <li><code>warn</code>: An array containing the output of any @warn statements.</li>
 <li><code>debug</code>: An array containing the output of any @debug statements.</li>
 </ul>
-<pre class="prettyprint source"><code>var sassyTest = require('sassy-test');
+<pre class="prettyprint source"><code>var SassyTest = require('sassy-test');
+var sassyTest = new SassyTest();
 
 describe('a test suite', function() {
   it('should test something', function(done) {
@@ -847,7 +858,7 @@ describe('a test suite', function() {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line158">line 158</a>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line176">line 176</a>
     </li></ul></dd>
     
 
@@ -937,7 +948,8 @@ any.</li>
 <li>expectedOutput: The text of the output.css file; should match the <code>css</code>
 property provided by node-sass.</li>
 </ul>
-<pre class="prettyprint source"><code>var sassyTest = require('sassy-test');
+<pre class="prettyprint source"><code>var SassyTest = require('sassy-test');
+var sassyTest = new SassyTest();
 
 describe('a test suite', function() {
   it('should test something', function(done) {
@@ -1127,7 +1139,7 @@ describe('a test suite', function() {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line305">line 305</a>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line324">line 324</a>
     </li></ul></dd>
     
 
