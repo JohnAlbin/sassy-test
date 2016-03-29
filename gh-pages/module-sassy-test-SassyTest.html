@@ -161,7 +161,7 @@ var sassyTest = new SassyTest();</code></pre></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line29">line 29</a>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line31">line 31</a>
     </li></ul></dd>
     
 
@@ -204,6 +204,144 @@ var sassyTest = new SassyTest();</code></pre></div>
 
     
         <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="assertResult"><span class="type-signature"></span>assertResult<span class="signature">(result)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Runs assertions against <code>renderFixture()</code>'s result object.</p>
+<p>The <code>renderFixture()</code> automatically calls this method to run a standard set
+of assertions against the result object before it is returned. If no Sass
+error occurs, <code>assertResult()</code> checks for an error when reading the
+output.css file using <code>assert.ifError()</code> and compares the results to the
+expected output using <code>assert.strictEqual()</code>.</p>
+<p>If the SassyTest user chooses, this method can be overridden to perform
+different assertions.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>result</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The result object returned by <code>renderFixture()</code>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line232">line 232</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         
             
@@ -319,7 +457,7 @@ will automatically configure the <code>fixtures</code> path without you having t
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line69">line 69</a>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line71">line 71</a>
     </li></ul></dd>
     
 
@@ -473,7 +611,7 @@ var fixturePath = sassyTest.fixture('sub-folder', '_file.scss');</code></pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line101">line 101</a>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line103">line 103</a>
     </li></ul></dd>
     
 
@@ -526,25 +664,32 @@ var fixturePath = sassyTest.fixture('sub-folder', '_file.scss');</code></pre>
 
     
 
-    <h4 class="name" id="render"><span class="type-signature"></span>render<span class="signature">(options, callback)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="render"><span class="type-signature"></span>render<span class="signature">(options, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise|*}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Runs node-sass' render() with a light weight wrapper.</p>
+    <p>Runs node-sass' render() with a light-weight wrapper.</p>
 <p>In addition to running node-sass' render(), this method:</p>
 <ul>
 <li>adds the test fixtures path directory to the includePaths</li>
 <li>ensures the includePaths are passed to node-sass</li>
-<li>converts render.css from a buffer to a string</li>
-<li>converts render.map to an object (Note: you will need to configure the
-proper sourcemap options)</li>
-<li>Captures messages generated with <code>@warn</code> and puts them in an array stored
-in render.warn.</li>
-<li>Captures messages generated with <code>@debug</code> and puts them in an array
-stored in render.debug.</li>
+</ul>
+<p>And sassy-test modifies the <a href="https://github.com/sass/node-sass#result-object">node-sass result
+object</a> by</p>
+<ul>
+<li>converting the <code>css</code> property from a buffer to a string</li>
+<li>converting the <code>map</code> property from a buffer to an object (Note: you will
+need to configure the proper sourcemap options before node-sass will add
+a <code>map</code> property.)</li>
+</ul>
+<p>Sassy-test also adds the following properties to the node-sass result
+object:</p>
+<ul>
+<li><code>warn</code>: An array containing the output of any @warn statements.</li>
+<li><code>debug</code>: An array containing the output of any @debug statements.</li>
 </ul>
 <pre class="prettyprint source"><code>var sassyTest = require('sassy-test');
 
@@ -556,8 +701,8 @@ describe('a test suite', function() {
     sassyTest.render(options, function(error, result) {
       assert.ifError(error);
       assert.ok(result.css);
+      done();
     });
-    done();
   });
 });</code></pre>
 </div>
@@ -582,6 +727,8 @@ describe('a test suite', function() {
 
         <th>Type</th>
 
+        
+        <th>Attributes</th>
         
 
         
@@ -608,6 +755,14 @@ describe('a test suite', function() {
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
@@ -633,15 +788,25 @@ describe('a test suite', function() {
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last"><p>An asynchronous callback with the signature of
-  <code>function(error, result)</code>. In error conditions, the error argument is
-  populated with the error object. In success conditions, the result object
-  is populated with an object describing the result of the render call. For
-  full details, see the <a href="https://github.com/sass/node-sass#error-object">node-sass documentation for the error and result
-  objects</a>.</p></td>
+            <td class="description last"><p>An asynchronous callback with the signature
+  of <code>function(error, result)</code>. In error conditions, the error argument is
+  populated with the <a href="https://github.com/sass/node-sass#error-object">node-sass error
+  object</a>. In success
+  conditions, the result object is populated with an object describing the
+  result of the render call.</p></td>
         </tr>
 
     
@@ -682,7 +847,7 @@ describe('a test suite', function() {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line149">line 149</a>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line158">line 158</a>
     </li></ul></dd>
     
 
@@ -705,6 +870,32 @@ describe('a test suite', function() {
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>If no <code>callback</code> function is given, this method
+  returns a Promise that resolves to node-sass' result object.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+|
+
+<span class="param-type">*</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -713,7 +904,7 @@ describe('a test suite', function() {
 
     
 
-    <h4 class="name" id="renderFixture"><span class="type-signature"></span>renderFixture<span class="signature">(fixtureDirectory, options, callback)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="renderFixture"><span class="type-signature"></span>renderFixture<span class="signature">(fixtureDirectory, options, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise|*}</span></h4>
 
     
 
@@ -722,12 +913,30 @@ describe('a test suite', function() {
 <div class="description">
     <p>Renders the test fixture and returns the result.</p>
 <p>Looks inside the specified folder in test/fixtures, renders the input.scss
-file and reads the output.css file. If no Sass error occurs, it compares
-the results to the expected output using <code>assert.strictEqual()</code>.</p>
+file and reads the output.css file. Before it returns the node-sass result
+object, it calls <code>assertResult()</code> to run a standard set of assertions.</p>
 <p>renderFixture() does not test for errors itself; it requires the callback
 to decide if a Sass error is a test failure or not. Good Sass libraries
 should <code>@error</code> if used incorrectly and sassy-test lets you see these
 errors and assert they were the expected result.</p>
+<p>Sassy-test modifies the <a href="https://github.com/sass/node-sass#result-object">node-sass result
+object</a> by</p>
+<ul>
+<li>converting the <code>css</code> property from a buffer to a string</li>
+<li>converting the <code>map</code> property from a buffer to an object (Note: you will
+need to configure the proper sourcemap options before node-sass will add
+a <code>map</code> property.)</li>
+</ul>
+<p>Sassy-test also adds the following properties to the node-sass result
+object:</p>
+<ul>
+<li><code>warn</code>: An array containing the output of any @warn statements.</li>
+<li><code>debug</code>: An array containing the output of any @debug statements.</li>
+<li>sassError: A node-sass error object which contains @error statements, if
+any.</li>
+<li>expectedOutput: The text of the output.css file; should match the <code>css</code>
+property provided by node-sass.</li>
+</ul>
 <pre class="prettyprint source"><code>var sassyTest = require('sassy-test');
 
 describe('a test suite', function() {
@@ -740,8 +949,8 @@ describe('a test suite', function() {
       // the rendered output of fixtures/sometest/input.scss to
       // fixtures/sometest/output.css.
       assert.ifError(error);
+      done();
     });
-    done();
   });
 });</code></pre>
 </div>
@@ -766,6 +975,8 @@ describe('a test suite', function() {
 
         <th>Type</th>
 
+        
+        <th>Attributes</th>
         
 
         
@@ -792,6 +1003,14 @@ describe('a test suite', function() {
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
@@ -815,6 +1034,14 @@ describe('a test suite', function() {
             
             </td>
 
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -841,17 +1068,25 @@ describe('a test suite', function() {
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last"><p>An asynchronous callback with the signature of
-  <code>function(error, result, expectedOutput)</code>. The expectedOutput is always
-  given the contents of the output.css file in the specified fixture. In
-  error conditions, the error argument is populated with the error object.
-  In success conditions, the result object is populated with an object
-  describing the result of the render call. For full details, see the
-  <a href="https://github.com/sass/node-sass#error-object">node-sass documentation for the error and result
-  objects</a>.</p></td>
+            <td class="description last"><p>An asynchronous callback with the signature
+  of <code>function(error, result)</code>. In error conditions, the error argument is
+  populated with the <a href="https://github.com/sass/node-sass#error-object">node-sass error
+  object</a>. In success
+  conditions, the result object is populated with an object describing the
+  result of the render call.</p></td>
         </tr>
 
     
@@ -892,7 +1127,7 @@ describe('a test suite', function() {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line234">line 234</a>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line305">line 305</a>
     </li></ul></dd>
     
 
@@ -915,6 +1150,32 @@ describe('a test suite', function() {
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>If no <code>callback</code> function is given, this method
+  returns a Promise that resolves to node-sass' result object.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+|
+
+<span class="param-type">*</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
