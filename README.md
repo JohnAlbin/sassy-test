@@ -56,7 +56,7 @@ before(function(done) {
     // Path to the Sass module we are testing and its dependencies.
     includePaths: [
       path.join(__dirname, '../sass'),
-      path.join(__dirname, '../node_modules/breakpoint-sass/stylesheets'
+      path.join(__dirname, '../node_modules/breakpoint-sass/stylesheets')
     ]
     // Since our fixtures are in test/fixtures, we don't need to override
     // the default value by setting the "fixtures" path here.
@@ -70,8 +70,6 @@ For more information, see the [`configurePaths()` documentation](http://johnalbi
 Then in our test file, test_mymodule.js, we can use `sassyTest` to simplify our tests:
 
 ```JavaScript
-'use strict';
-
 describe('@import "mymodule";', function() {
   describe('@function my-modules-function()', function() {
     it('should test an aspect of this function', function(done) {
@@ -79,12 +77,12 @@ describe('@import "mymodule";', function() {
       // rendered input.scss and the output.css found in the fixtures
       // sub-directory specified in its first parameter, in this case:
       // test/fixtures/my-modules-function
-      sassyTest.renderFixture('my-modules-function', {}, function(error, result, expectedOutput) {
+      sassyTest.renderFixture('my-modules-function', {}, function(error, result) {
         // If we expect the comparison test to succeed, we just need to test
         // that no error occurred and then done(), but we can run other tests
-        // here if we desire; both expectedOutput (the contents of output.css)
-        // and node-sass's result object are available.
-        should.not.exist(error);
+        // here if we desire.
+        expect(error).to.not.exist;
+        expect(result.css).to.expect('.some-valid-css {border: 0}');
         done();
       });
     });
@@ -92,12 +90,12 @@ describe('@import "mymodule";', function() {
     it('should throw an error in this situation', function(done) {
       // Sassy Test's renderFixture() can also test if your module produces an
       // intentional error with Sass' @error directive.
-      sassyTest.renderFixture('my-modules-error', {}, function(error, result, expectedOutput) {
+      sassyTest.renderFixture('my-modules-error', {}, function(error, result) {
         // If the Sass in test/fixtures/my-modules-error/input.scss triggers an
         // @error in your module, you should expect the error object to exist
         // and to contain the error message from your module.
-        error.should.exist;
-        error.message.should.equal('Some helpful error message from your module.');
+        expect(error).to.exist;
+        expect(error.message).to.equal('Some helpful error message from your module.');
         done();
       });
     });
@@ -105,15 +103,48 @@ describe('@import "mymodule";', function() {
     it('should warn in another situation', function(done) {
       // Sassy Test's renderFixture() can also test if your module produces an
       // intentional warning message with Sass' @warn directive.
-      sassyTest.renderFixture('my-modules-warn', {}, function(error, result, expectedOutput) {
+      sassyTest.renderFixture('my-modules-warn', {}, function(error, result) {
         // If the Sass in test/fixtures/my-modules-warn/input.scss triggers a
         // @warn in your module, you should expect the result object to exist
         // and to contain the warn message from your module.
-        should.not.exist(error);
+        expect(error).to.not.exist;
         // Sassy Test adds two new arrays to node-sass' result object:
         // result.warn and result.debug are arrays of strings.
-        result.warn[0].should.equal('Some helpful warning from your module.');
+        expect(result.warn[0]).to.equal('Some helpful warning from your module.');
         done();
+      });
+    });
+  });
+});
+```
+
+SassyTest's `render()` and `renderFixture()` methods will return a Promise if you don't provide a callback:
+
+```JavaScript
+describe('@import "mymodule";', function() {
+  describe('@function my-modules-function()', function() {
+    it('should test an aspect of this function', function() {
+      return sassyTest.renderFixture('my-modules-function', {}).catch(function(error) {
+        expect(error).to.not.exist;
+      }).then(function(result) {
+        expect(result.css).to.expect('.some-valid-css {border: 0}');
+      });
+    });
+
+    it('should throw an error in this situation', function() {
+      return sassyTest.renderFixture('my-modules-error', {}).then(function(result) {
+        expect(result).to.not.exist;
+      }).catch(function(error) {
+        expect(error).to.exist;
+        expect(error.message).to.equal('Some helpful error message from your module.');
+      });
+    });
+
+    it('should warn in another situation', function() {
+      return sassyTest.renderFixture('my-modules-warn', {}).catch(function(error) {
+        expect(error).to.not.exist;
+      }).then(function(result) {
+        expect(result.warn[0]).to.equal('Some helpful warning from your module.');
       });
     });
   });
