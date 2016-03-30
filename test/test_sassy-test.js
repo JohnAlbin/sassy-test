@@ -297,18 +297,6 @@ describe('sassy-test', function() {
   });
 
   describe('.assertResult()', function() {
-    it('should not throw an error if result.sassError exists', function(done) {
-      var sassyTest = new SassyTest(),
-        result = {
-          sassError: new Error('Sass error'),
-          expectedOutputFileError: new Error('Test output error'),
-          css: '.output {}',
-          expectedOutput: '.output {}'
-        };
-      expect(sassyTest.assertResult.bind(null, result)).to.not.throw(Error, 'Test output error');
-      done();
-    });
-
     it('should throw an error if result.expectedOutputFileError exists', function(done) {
       var sassyTest = new SassyTest(),
         result = {
@@ -384,8 +372,7 @@ describe('sassy-test', function() {
 
     it('should return the node-sass error', function(done) {
       this.sassyTest.renderFixture('renderFixture/failureSass', {}, function(error, result) {
-        expect(result.css).to.not.exist;
-        expect(result.expectedOutput).to.exist;
+        expect(result).to.not.exist;
         expect(error).to.be.error;
         expect(error).to.have.property('message');
         expect(error.message).to.be.string;
@@ -404,8 +391,7 @@ describe('sassy-test', function() {
 
     it('should ignore the output error and return the node-sass error', function(done) {
       this.sassyTest.renderFixture('renderFixture/failureNoOutput', {}, function(error, result) {
-        expect(result.css).to.not.exist;
-        expect(result.expectedOutput).to.not.exist;
+        expect(result).to.not.exist;
         expect(error).to.be.error;
         expect(error.message).to.equal('renderFixture failure, not an output error.');
         expect(error).to.not.have.property('code');
@@ -486,8 +472,7 @@ describe('sassy-test', function() {
 
       it('should return the node-sass error', function() {
         this.sassyTest.renderFixture('renderFixture/failureSass', {}).then(function(result) {
-          expect(result.css).to.not.exist;
-          expect(result.expectedOutput).to.exist;
+          expect(result).to.not.exist;
         }).catch(function(error) {
           expect(error).to.be.error;
           expect(error).to.have.property('message');
@@ -506,8 +491,7 @@ describe('sassy-test', function() {
 
       it('should ignore the output error and return the node-sass error', function() {
         this.sassyTest.renderFixture('renderFixture/failureNoOutput', {}).then(function(result) {
-          expect(result.css).to.not.exist;
-          expect(result.expectedOutput).to.not.exist;
+          expect(result).to.not.exist;
         }).catch(function(error) {
           expect(error).to.be.error;
           expect(error.message).to.equal('renderFixture failure, not an output error.');

@@ -248,15 +248,11 @@ class SassyTest {
    * @param {object} result The result object returned by `renderFixture()`.
    */
   assertResult(result) {
-    // We always return a Sass error, so don't run our assertions if there is
-    // a Sass error.
-    if (!result.sassError) {
-      // A missing output.css file is a hard fail.
-      assert.ifError(result.expectedOutputFileError);
+    // A missing output.css file is a hard fail.
+    assert.ifError(result.expectedOutputFileError);
 
-      // Compare the Sass compilation to the expected output file.
-      assert.strictEqual(result.css, result.expectedOutput);
-    }
+    // Compare the Sass compilation to the expected output file.
+    assert.strictEqual(result.css, result.expectedOutput);
   }
 
   /**
@@ -334,7 +330,6 @@ class SassyTest {
 
     let test = {
       result: null,
-      sassError: null,
       expectedOutput: null,
       expectedOutputFileError: null
     };
@@ -342,7 +337,6 @@ class SassyTest {
     let handleResult = (test) => {
       // Move our properties into the node-sass result object.
       let result = test.result || {};
-      result.sassError = test.sassError;
       result.expectedOutput = test.expectedOutput;
       result.expectedOutputFileError = test.expectedOutputFileError;
 
@@ -354,6 +348,7 @@ class SassyTest {
     if (callback) {
       test.completedSassRender = false;
       test.completedReadFile = false;
+      test.sassError = null;
 
       var compareResults = () => {
         // We are waiting for all tasks to complete before completing this task.
@@ -362,7 +357,11 @@ class SassyTest {
         }
 
         // Give the callback access to the results.
-        callback(test.sassError, handleResult(test));
+        if (test.sassError) {
+          callback(test.sassError, null);
+        } else {
+          callback(null, handleResult(test));
+        }
       };
 
       // Do a sass.render() on the input.scss file.
@@ -392,10 +391,7 @@ class SassyTest {
     } else {
       return Promise.all([
         // Do a sass.render() on the input.scss file.
-        this.render(options).catch(error => {
-          test.sassError = error;
-          return Promise.resolve(null);
-        }).then(result => {
+        this.render(options).then(result => {
           test.result = result;
           return Promise.resolve();
         }),
