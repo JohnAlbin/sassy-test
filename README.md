@@ -136,7 +136,7 @@ describe('@import "mymodule";', function() {
         expect(result).to.not.exist;
       }).catch(function(error) {
         expect(error).to.exist;
-        expect(error.message).to.equal('Some helpful error message from your module.');
+        expect(error.message).to.include('Some helpful error message from your module.');
       });
     });
 
