@@ -65,7 +65,7 @@ before(function(done) {
 });
 ```
 
-For more information, see the [`configurePaths()` documentation](http://johnalbin.github.io/sassy-test/module-sassy-test.html#.configurePaths).
+For more information, see the [`configurePaths()` documentation](http://johnalbin.github.io/sassy-test/module-sassy-test-SassyTest.html#configurePaths).
 
 Then in our test file, test_mymodule.js, we can use `sassyTest` to simplify our tests:
 
@@ -118,21 +118,20 @@ describe('@import "mymodule";', function() {
 });
 ```
 
-SassyTest's `render()` and `renderFixture()` methods will return a Promise if you don't provide a callback:
+SassyTest's `render()` and `renderFixture()` methods will return a `Promise` if you don't provide a callback:
 
 ```JavaScript
 describe('@import "mymodule";', function() {
   describe('@function my-modules-function()', function() {
     it('should test an aspect of this function', function() {
-      return sassyTest.renderFixture('my-modules-function', {}).catch(function(error) {
-        expect(error).to.not.exist;
-      }).then(function(result) {
+      return sassyTest.renderFixture('my-modules-function', {}).then(function(result) {
         expect(result.css).to.expect('.some-valid-css {border: 0}');
       });
     });
 
     it('should throw an error in this situation', function() {
       return sassyTest.renderFixture('my-modules-error', {}).then(function(result) {
+        // Make sure the test really does produce an error.
         expect(result).to.not.exist;
       }).catch(function(error) {
         expect(error).to.exist;
@@ -141,9 +140,7 @@ describe('@import "mymodule";', function() {
     });
 
     it('should warn in another situation', function() {
-      return sassyTest.renderFixture('my-modules-warn', {}).catch(function(error) {
-        expect(error).to.not.exist;
-      }).then(function(result) {
+      return sassyTest.renderFixture('my-modules-warn', {}).then(function(result) {
         expect(result.warn[0]).to.equal('Some helpful warning from your module.');
       });
     });
