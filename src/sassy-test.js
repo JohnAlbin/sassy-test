@@ -336,7 +336,7 @@ class SassyTest {
 
     let handleResult = (test) => {
       // Move our properties into the node-sass result object.
-      let result = test.result || {};
+      let result = test.result || /* istanbul ignore next */ {};
       result.expectedOutput = test.expectedOutput;
       result.expectedOutputFileError = test.expectedOutputFileError;
 
