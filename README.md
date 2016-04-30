@@ -82,7 +82,6 @@ describe('@import "mymodule";', function() {
         // that no error occurred and then done(), but we can run other tests
         // here if we desire.
         expect(error).to.not.exist;
-        expect(result.css).to.expect('.some-valid-css {border: 0}');
         done();
       });
     });
@@ -124,15 +123,17 @@ SassyTest's `render()` and `renderFixture()` methods will return a `Promise` if 
 describe('@import "mymodule";', function() {
   describe('@function my-modules-function()', function() {
     it('should test an aspect of this function', function() {
-      return sassyTest.renderFixture('my-modules-function', {}).then(function(result) {
-        expect(result.css).to.expect('.some-valid-css {border: 0}');
-      });
+      // Sassy Test's renderFixture() will run a comparison test between the
+      // rendered input.scss and the output.css. If we expect the comparison
+      // test to succeed, we just need to return the Promise to mocha. But we
+      // can run other tests in a `then()` if we desire.
+      return sassyTest.renderFixture('my-modules-function', {});
     });
 
     it('should throw an error in this situation', function() {
       return sassyTest.renderFixture('my-modules-error', {}).then(function(result) {
-        // Make sure the test really does produce an error.
-        expect(result).to.not.exist;
+        // If the expected Sass error does not occur, we need to fail the test.
+        throw new Error('An error should have occurred');
       }).catch(function(error) {
         expect(error).to.exist;
         expect(error.message).to.include('Some helpful error message from your module.');
