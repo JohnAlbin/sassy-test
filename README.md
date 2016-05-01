@@ -35,41 +35,29 @@ Example project's root directory:
   │ └─┬ my-modules-warn/
   │   ├── input.scss
   │   └── output.css
-  ├── helper.js
   └── test_mymodule.scss
 ```
 
-With mocha, we can place a call to `before()` in the root of any test file and it will be run once before all the other tests in every `test_*.js` file. We can also `require()` files and assign them to the `global` object to make them available to all `test_*.js` files. A file called helper.js can be used to set up our mocha global requires and `before()`:
+Then in our test file, test/test_mymodule.js, we can use `sassyTest` to simplify our tests:
 
 ```JavaScript
 'use strict';
 
-// Globals for all test_*.js files.
-global.path = require('path');
-global.expect = require('chai').expect;
-global.SassyTest = require('sassy-test');
-global.sassyTest = new SassyTest();
+var path = require('path');
+var expect = require('chai').expect;
+var SassyTest = require('sassy-test');
 
-// This before() is run before any test_*.js file.
-before(function(done) {
-  sassyTest.configurePaths({
-    // Path to the Sass module we are testing and its dependencies.
-    includePaths: [
-      path.join(__dirname, '../sass'),
-      path.join(__dirname, '../node_modules/breakpoint-sass/stylesheets')
-    ]
-    // Since our fixtures are in test/fixtures, we don't need to override
-    // the default value by setting the "fixtures" path here.
-  });
-  done();
+var sassyTest = new SassyTest({
+  // Path to the Sass module we are testing and its dependencies.
+  includePaths: [
+    path.join(__dirname, '../sass'),
+    path.join(__dirname, '../node_modules/breakpoint-sass/stylesheets')
+  ]
+  // Since our fixtures are in test/fixtures, we don't need to override
+  // the default value by setting the "fixtures" path here.
+  // fixtures: path.join(__dirname, 'fixtures'),
 });
-```
 
-For more information, see the [`configurePaths()` documentation](http://johnalbin.github.io/sassy-test/module-sassy-test-SassyTest.html#configurePaths).
-
-Then in our test file, test_mymodule.js, we can use `sassyTest` to simplify our tests:
-
-```JavaScript
 describe('@import "mymodule";', function() {
   describe('@function my-modules-function()', function() {
     it('should test an aspect of this function', function(done) {
@@ -117,21 +105,22 @@ describe('@import "mymodule";', function() {
 });
 ```
 
-SassyTest's `render()` and `renderFixture()` methods will return a `Promise` if you don't provide a callback:
+For more information about configuring a SassyTest object, see the [`configurePaths()` method documentation](http://johnalbin.github.io/sassy-test/module-sassy-test-SassyTest.html#configurePaths).
+
+## JavaScript Promises
+
+SassyTest's `render()` and `renderFixture()` methods will return a `Promise` if you don't provide a callback. Promises are available with Node.js 4.0.0 and later, or a Promise-compliant module on earlier versions of Node.js.
 
 ```JavaScript
 describe('@import "mymodule";', function() {
   describe('@function my-modules-function()', function() {
     it('should test an aspect of this function', function() {
-      // Sassy Test's renderFixture() will run a comparison test between the
-      // rendered input.scss and the output.css. If we expect the comparison
-      // test to succeed, we just need to return the Promise to mocha. But we
-      // can run other tests in a `then()` if we desire.
-      return sassyTest.renderFixture('my-modules-function', {});
+      // Mocha accepts sassyTest's returned Promise.
+      return sassyTest.renderFixture('my-modules-function');
     });
 
     it('should throw an error in this situation', function() {
-      return sassyTest.renderFixture('my-modules-error', {}).then(function(result) {
+      return sassyTest.renderFixture('my-modules-error').then(function(result) {
         // If the expected Sass error does not occur, we need to fail the test.
         throw new Error('An error should have occurred');
       }).catch(function(error) {
@@ -141,7 +130,7 @@ describe('@import "mymodule";', function() {
     });
 
     it('should warn in another situation', function() {
-      return sassyTest.renderFixture('my-modules-warn', {}).then(function(result) {
+      return sassyTest.renderFixture('my-modules-warn').then(function(result) {
         expect(result.warn[0]).to.equal('Some helpful warning from your module.');
       });
     });
