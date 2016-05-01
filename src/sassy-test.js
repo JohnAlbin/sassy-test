@@ -171,7 +171,8 @@ class SassyTest {
    *   conditions, the result object is populated with an object describing the
    *   result of the render call.
    * @returns {Promise|*} If no `callback` function is given, this method
-   *   returns a Promise that resolves to node-sass' result object.
+   *   returns a Promise that resolves to node-sass' result object or rejects to
+   *   node-sass' error object.
    */
   render(options, callback) {
     if (typeof options !== 'object') {
@@ -315,7 +316,8 @@ class SassyTest {
    *   conditions, the result object is populated with an object describing the
    *   result of the render call.
    * @returns {Promise|*} If no `callback` function is given, this method
-   *   returns a Promise that resolves to node-sass' result object.
+   *   returns a Promise that resolves to node-sass' result object or rejects to
+   *   node-sass' error object.
    */
   renderFixture(fixtureDirectory, options, callback) {
     options = options || /* istanbul ignore next */ {};
