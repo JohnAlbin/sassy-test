@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/JohnAlbin/sassy-test.png?branch=master)](http://travis-ci.org/JohnAlbin/sassy-test/builds) [![Coverage Status](https://coveralls.io/repos/JohnAlbin/sassy-test/badge.svg?branch=master&service=github)](https://coveralls.io/github/JohnAlbin/sassy-test?branch=master)
+[![Build Status](https://secure.travis-ci.org/at-import/sassy-test.png?branch=master)](http://travis-ci.org/at-import/sassy-test/builds) [![Coverage Status](https://coveralls.io/repos/at-import/sassy-test/badge.svg?branch=master&service=github)](https://coveralls.io/github/at-import/sassy-test?branch=master)
 
 
 # Sassy Test
@@ -105,7 +105,7 @@ describe('@import "mymodule";', function() {
 });
 ```
 
-For more information about configuring a SassyTest object, see the [`configurePaths()` method documentation](http://johnalbin.github.io/sassy-test/module-sassy-test-SassyTest.html#configurePaths).
+For more information about configuring a SassyTest object, see the [`configurePaths()` method documentation](http://at-import.github.io/sassy-test/module-sassy-test-SassyTest.html#configurePaths).
 
 ## JavaScript Promises
 
@@ -138,7 +138,7 @@ describe('@import "mymodule";', function() {
 });
 ```
 
-[Full documentation of Sassy Test’s JavaScript API](http://johnalbin.github.io/sassy-test) is available online.
+[Full documentation of Sassy Test’s JavaScript API](http://at-import.github.io/sassy-test) is available online.
 
 ## Development
 
@@ -148,4 +148,4 @@ After you've cloned this repository, run `npm install` and then you'll be able t
 
 ## Contributors
 
-None but me yet. All are welcome! https://github.com/JohnAlbin/sassy-test/graphs/contributors
+None but me yet. All are welcome! https://github.com/at-import/sassy-test/graphs/contributors

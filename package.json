@@ -1,7 +1,7 @@
 {
   "name": "sassy-test",
   "version": "3.0.4",
-  "homepage": "https://github.com/JohnAlbin/sassy-test",
+  "homepage": "https://github.com/at-import/sassy-test",
   "author": "John Albin Wilkins <virtually.johnalbin@gmail.com> (http://john.albin.net/)",
   "description": "A simple helper utility for creating unit tests of Sass modules. Works great with mocha or jasmine.",
   "license": "GPL-2.0",
@@ -42,9 +42,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/JohnAlbin/sassy-test.git"
+    "url": "git://github.com/at-import/sassy-test.git"
   },
   "bugs": {
-    "url": "https://github.com/JohnAlbin/sassy-test/issues"
+    "url": "https://github.com/at-import/sassy-test/issues"
   }
 }
