@@ -399,14 +399,12 @@ class SassyTest {
         }),
 
         // Read the output.css file.
-        fs.readFileAsync(options.outFile).catch(error => {
+        fs.readFileAsync(options.outFile).then(expectedOutput => {
+          // Convert fs' data buffer to a string.
+          test.expectedOutput = expectedOutput.toString();
+          return Promise.resolve();
+        }).catch(error => {
           test.expectedOutputFileError = error;
-          return Promise.resolve(null);
-        }).then(expectedOutput => {
-          if (expectedOutput) {
-            // Convert fs' data buffer to a string.
-            test.expectedOutput = expectedOutput.toString();
-          }
           return Promise.resolve();
         })
       ]).then(() => {
