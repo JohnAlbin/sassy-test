@@ -36,7 +36,7 @@
     "test": "istanbul cover -i 'src/**' _mocha",
     "posttest": "eslint .",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
-    "test-no-coverage": "mocha",
+    "test-only": "mocha",
     "build": "babel src --out-dir lib",
     "docs": "make docs"
   },

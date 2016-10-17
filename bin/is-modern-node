@@ -4,13 +4,12 @@
 
 'use strict';
 
-function nodeHasES6() {
-  // All Node.js and IO.js versions since 1.0 have a V8 engine that can
-  // interpret ES2015 (ES6) JavaScript syntax.
-  return /^v[1-9]\d*\.\S+$/.test(process.version);
+// Checks for "v4." or greater.
+function isModernNode() {
+  return /^v([4-9]|\d{2,})\.\S+$/.test(process.version);
 }
 
-if (nodeHasES6()) {
+if (isModernNode()) {
   console.log('Running on Node.js ' + process.version + ', which includes JavaScript ES2015.');
   process.exit(0);
 } else {
