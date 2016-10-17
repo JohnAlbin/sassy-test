@@ -9,10 +9,8 @@ function isModernNode() {
   return /^v([4-9]|\d{2,})\.\S+$/.test(process.version);
 }
 
-if (isModernNode()) {
-  console.log('Running on Node.js ' + process.version + ', which includes JavaScript ES2015.');
-  process.exit(0);
-} else {
-  console.error('Running on Node.js ' + process.version + ', which does not include JavaScript ES2015.');
+if (!isModernNode()) {
+  console.error('Node.js ' + process.version + 'detected; alternate script will be run.');
+  // Return a non-zero (false) value to the shell.
   process.exit(1);
 }

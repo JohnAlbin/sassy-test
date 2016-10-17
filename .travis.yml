@@ -9,4 +9,4 @@ node_js:
   - '6'
 # Only test and report coverage on Node.js 4 or later.
 script: ./bin/is-modern-node && npm test || npm run test-only
-after_script: ./bin/is-modern-node && npm run report-coverage
+after_script: ./bin/is-modern-node && npm run report-coverage || echo "Coverage report was skipped."
