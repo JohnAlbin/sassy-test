@@ -3,6 +3,8 @@
 
 # Sassy Test
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/JohnAlbin/sassy-test.svg)](https://greenkeeper.io/)
+
 Sassy Test is a simple helper utility for creating unit tests of Sass modules.
 
 Sassy Test models its testing after the unit tests in LibSass. LibSass has a series of sub-folders in its "test/fixtures" directory that contain an "input" Sass file and an "output" CSS file. Its unit tests then reference a particular folder, render the input.scss and compare the results to the output.css file.
