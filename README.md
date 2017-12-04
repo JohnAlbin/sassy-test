@@ -105,7 +105,7 @@ describe('@import "mymodule";', function() {
 });
 ```
 
-For more information about configuring a SassyTest object, see the [`configurePaths()` method documentation](http://johnalbin.github.io/sassy-test/module-sassy-test-SassyTest.html#configurePaths).
+For more information about configuring a SassyTest object, see the [`configurePaths()` method documentation](https://johnalbin.github.io/sassy-test/module-sassy-test-SassyTest.html#configurePaths).
 
 ## JavaScript Promises
 
@@ -138,7 +138,7 @@ describe('@import "mymodule";', function() {
 });
 ```
 
-[Full documentation of Sassy Test’s JavaScript API](http://johnalbin.github.io/sassy-test) is available online.
+[Full documentation of Sassy Test’s JavaScript API](https://johnalbin.github.io/sassy-test) is available online.
 
 ## Development
 
