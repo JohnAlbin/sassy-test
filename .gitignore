@@ -1,6 +1,7 @@
 # Exclude stuff specific to this project.
 node_modules
 coverage
+.nyc_output
 
 # Exclude IDE management files.
   # Eclipse

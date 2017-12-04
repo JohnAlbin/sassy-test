@@ -26,14 +26,15 @@
     "chai": "^4.1.2",
     "coveralls": "^3.0.0",
     "eslint": "^4.12.1",
-    "istanbul": "^0.4.2",
     "jsdoc": "^3.4.0",
-    "mocha": "^4.0.0"
+    "mocha": "^4.0.0",
+    "nyc": "^11.3.0"
   },
   "scripts": {
-    "test": "istanbul cover -i 'src/**' _mocha",
+    "test": "nyc mocha",
     "posttest": "eslint .",
-    "report-coverage": "cat ./coverage/lcov.info | coveralls",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "report": "nyc --reporter=html mocha",
     "docs": "make docs"
   },
   "repository": {

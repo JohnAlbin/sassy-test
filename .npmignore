@@ -3,6 +3,7 @@ docs/
 test/
 .babelrc
 .eslint*
+.nyc_output/
 .travis.yml
 Makefile
 package-lock.json

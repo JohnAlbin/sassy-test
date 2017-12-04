@@ -5,4 +5,5 @@
 docs/**
 
 # Ignore test coverage reports
+.nyc_output/**
 coverage/**
