@@ -317,7 +317,7 @@ describe('sassy-test', function() {
           css: '.output {}',
           expectedOutput: '.output.does-not-match {}'
         };
-      expect(sassyTest.assertResult.bind(null, result)).to.throw(Error, 'AssertionError: \'.output {}\' === \'.output.does-not-match {}\'');
+      expect(sassyTest.assertResult.bind(null, result)).to.throw(Error, '\'.output {}\' === \'.output.does-not-match {}\'');
       done();
     });
   });
