@@ -5,13 +5,7 @@ var expect = require('chai').expect,
   Promise = require('bluebird'),
   sass = require('node-sass');
 
-// Node.js 0.12 gets the Babel-transformed lib/* version.
-var SassyTest;
-if (Number.parseInt(process.versions.node.split('.')[0]) < 1) {
-  SassyTest = require('../lib/sassy-test.js');
-} else {
-  SassyTest = require('../src/sassy-test.js');
-}
+var SassyTest = require('../src/sassy-test.js');
 
 describe('sassy-test', function() {
   describe('API', function() {
