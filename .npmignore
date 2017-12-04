@@ -1,9 +1,8 @@
 coverage/
-gh-pages/
+docs/
 src/
 test/
 .babelrc
 .eslint*
 .travis.yml
-gh-pages.sh
 Makefile

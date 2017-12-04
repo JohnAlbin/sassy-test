@@ -5,7 +5,7 @@
 lib/**
 
 # Ignore the docs pages.
-gh-pages/**
+docs/**
 
 # Ignore test coverage reports
 coverage/**

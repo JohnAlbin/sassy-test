@@ -6,8 +6,8 @@
     "exclude": []
   },
   "opts": {
-    "destination": "./gh-pages/",
-    "readme": "./gh-pages/api-homepage.md",
+    "destination": "./docs/",
+    "readme": "./docs/api-homepage.md",
     "recurse": true,
     "verbose": true
   },
