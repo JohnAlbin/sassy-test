@@ -30,7 +30,7 @@
     "eslint": "^4.12.1",
     "istanbul": "^0.4.2",
     "jsdoc": "^3.4.0",
-    "mocha": "^3.1.2"
+    "mocha": "^4.0.0"
   },
   "scripts": {
     "test": "istanbul cover -i 'src/**' _mocha",
