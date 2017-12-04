@@ -17,7 +17,7 @@ describe('sassy-test', function() {
       it('has ' + method + '() method', function(done) {
         var sassyTest = new SassyTest();
         expect(sassyTest).to.have.property(method);
-        expect(sassyTest[method]).to.be.function;
+        expect(sassyTest[method]).to.be.a('function');
         done();
       });
     });
@@ -187,17 +187,17 @@ describe('sassy-test', function() {
         data: '@import "my-sass-library";\n@include my-sass-imported();'
       }, function(error, result) {
         expect(error).to.not.exist;
-        expect(result).to.be.object;
+        expect(result).to.be.an('object');
         expect(result).to.have.property('css');
-        expect(result.css).to.be.string;
+        expect(result.css).to.be.a('string');
         expect(result).to.have.property('map');
         expect(result.map).to.not.exist;
         expect(result).have.property('stats');
-        expect(result.stats).to.be.object;
+        expect(result.stats).to.be.an('object');
         expect(result).to.have.property('warn');
-        expect(result.warn).to.be.array;
+        expect(result.warn).to.be.an('array');
         expect(result).to.have.property('debug');
-        expect(result.debug).to.be.array;
+        expect(result.debug).to.be.an('array');
         done();
       });
     });
@@ -207,17 +207,17 @@ describe('sassy-test', function() {
         data: '@import "non-existant-sass-library";'
       }, function(error, result) {
         expect(result).to.not.exist;
-        expect(error).to.be.error;
+        expect(error).to.be.an('error');
         expect(error).to.have.property('message');
-        expect(error.message).to.be.string;
+        expect(error.message).to.be.a('string');
         expect(error).to.have.property('column');
-        expect(error.column).to.be.number;
+        expect(error.column).to.be.a('number');
         expect(error).to.have.property('line');
-        expect(error.line).to.be.number;
+        expect(error.line).to.be.a('number');
         expect(error).to.have.property('file');
-        expect(error.file).to.be.string;
+        expect(error.file).to.be.a('string');
         expect(error).to.have.property('status');
-        expect(error.status).to.be.number;
+        expect(error.status).to.be.a('number');
         done();
       });
     });
@@ -229,7 +229,7 @@ describe('sassy-test', function() {
         outFile: this.sassyTest.fixture('render/output.css')
       }, function(error, result) {
         expect(error).to.not.exist;
-        expect(result.map).to.be.object;
+        expect(result.map).to.be.an('object');
         done();
       });
     });
@@ -238,7 +238,7 @@ describe('sassy-test', function() {
       var self = this;
       this.sassyTest.render('', function(error, result) {
         expect(result).to.not.exist;
-        expect(error).to.be.error;
+        expect(error).to.be.an('error');
         expect(error.message).to.equal('Options parameter of render method must be an object.');
 
         // Make render() return a Promise.
@@ -246,7 +246,7 @@ describe('sassy-test', function() {
           expect(result).to.not.exist;
           done();
         }).catch(function(error) {
-          expect(error).to.be.error;
+          expect(error).to.be.an('error');
           expect(error.message).to.equal('Options parameter of render method must be an object.');
           done();
         });
@@ -281,9 +281,9 @@ describe('sassy-test', function() {
       return obj.then(function(result) {
         expect(result.css).to.equal('.test {\n  content: "my-sass-imported"; }\n');
         expect(result).to.have.property('warn');
-        expect(result.warn).to.be.array;
+        expect(result.warn).to.be.an('array');
         expect(result).to.have.property('debug');
-        expect(result.debug).to.be.array;
+        expect(result.debug).to.be.an('array');
       }).catch(function(error) {
         expect(error).to.not.exist;
       });
@@ -330,7 +330,7 @@ describe('sassy-test', function() {
     it('should render the input.scss file of the given fixtures directory', function(done) {
       this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result) {
         expect(error).to.not.exist;
-        expect(result.css).to.be.string;
+        expect(result.css).to.be.a('string');
         expect(result.css).to.equal('.test {\n  content: "renderFixture() test"; }\n');
         expect(result.expectedOutput).to.exist;
         done();
@@ -341,9 +341,9 @@ describe('sassy-test', function() {
       this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result) {
         expect(error).to.not.exist;
         expect(result.expectedOutput).to.exist;
-        expect(result.map).to.be.object;
+        expect(result.map).to.be.an('object');
         expect(result.map.file).to.equal('output.css');
-        expect(result.map.sources).to.be.array;
+        expect(result.map.sources).to.be.an('array');
         expect(result.map.sources).to.deep.equal(['input.scss']);
         done();
       });
@@ -353,13 +353,13 @@ describe('sassy-test', function() {
       this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result) {
         expect(error).to.not.exist;
         expect(result.expectedOutput).to.exist;
-        expect(result).to.be.object;
+        expect(result).to.be.an('object');
         expect(result).to.have.property('css');
-        expect(result.css).to.be.string;
+        expect(result.css).to.be.a('string');
         expect(result).to.have.property('map');
-        expect(result.map).to.be.object;
+        expect(result.map).to.be.an('object');
         expect(result).to.have.property('stats');
-        expect(result.stats).to.be.object;
+        expect(result.stats).to.be.an('object');
         done();
       });
     });
@@ -367,18 +367,18 @@ describe('sassy-test', function() {
     it('should return the node-sass error', function(done) {
       this.sassyTest.renderFixture('renderFixture/failureSass', {}, function(error, result) {
         expect(result).to.not.exist;
-        expect(error).to.be.error;
+        expect(error).to.be.an('error');
         expect(error).to.have.property('message');
-        expect(error.message).to.be.string;
+        expect(error.message).to.be.a('string');
         expect(error.message).to.equal('renderFixture failure.');
         expect(error).to.have.property('column');
-        expect(error.column).to.be.number;
+        expect(error.column).to.be.a('number');
         expect(error).to.have.property('line');
-        expect(error.line).to.be.number;
+        expect(error.line).to.be.a('number');
         expect(error).to.have.property('file');
-        expect(error.file).to.be.string;
+        expect(error.file).to.be.a('string');
         expect(error).to.have.property('status');
-        expect(error.status).to.be.number;
+        expect(error.status).to.be.a('number');
         done();
       });
     });
@@ -386,7 +386,7 @@ describe('sassy-test', function() {
     it('should ignore the output error and return the node-sass error', function(done) {
       this.sassyTest.renderFixture('renderFixture/failureNoOutput', {}, function(error, result) {
         expect(result).to.not.exist;
-        expect(error).to.be.error;
+        expect(error).to.be.an('error');
         expect(error.message).to.equal('renderFixture failure, not an output error.');
         expect(error).to.not.have.property('code');
         done();
@@ -397,7 +397,7 @@ describe('sassy-test', function() {
       this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result) {
         expect(error).to.not.exist;
         expect(result).to.exist;
-        expect(result.expectedOutput).to.be.string;
+        expect(result.expectedOutput).to.be.a('string');
         expect(result.expectedOutput).to.equal('.test {\n  content: "renderFixture() test"; }\n');
         done();
       });
@@ -431,7 +431,7 @@ describe('sassy-test', function() {
         return this.sassyTest.renderFixture('renderFixture/success', {}).catch(function(error) {
           expect(error).to.not.exist;
         }).then(function(result) {
-          expect(result.css).to.be.string;
+          expect(result.css).to.be.a('string');
           expect(result.css).to.equal('.test {\n  content: "renderFixture() test"; }\n');
           expect(result.expectedOutput).to.exist;
         });
@@ -442,9 +442,9 @@ describe('sassy-test', function() {
           expect(error).to.not.exist;
         }).then(function(result) {
           expect(result.expectedOutput).to.exist;
-          expect(result.map).to.be.object;
+          expect(result.map).to.be.an('object');
           expect(result.map.file).to.equal('output.css');
-          expect(result.map.sources).to.be.array;
+          expect(result.map.sources).to.be.an('array');
           expect(result.map.sources).to.deep.equal(['input.scss']);
         });
       });
@@ -454,13 +454,13 @@ describe('sassy-test', function() {
           expect(error).to.not.exist;
         }).then(function(result) {
           expect(result.expectedOutput).to.exist;
-          expect(result).to.be.object;
+          expect(result).to.be.an('object');
           expect(result).to.have.property('css');
-          expect(result.css).to.be.string;
+          expect(result.css).to.be.a('string');
           expect(result).to.have.property('map');
-          expect(result.map).to.be.object;
+          expect(result.map).to.be.an('object');
           expect(result).to.have.property('stats');
-          expect(result.stats).to.be.object;
+          expect(result.stats).to.be.an('object');
         });
       });
 
@@ -468,18 +468,17 @@ describe('sassy-test', function() {
         return this.sassyTest.renderFixture('renderFixture/failureSass', {}).then(function(result) {
           expect(result).to.not.exist;
         }).catch(function(error) {
-          expect(error).to.be.error;
           expect(error).to.have.property('message');
-          expect(error.message).to.be.string;
+          expect(error.message).to.be.a('string');
           expect(error.message).to.equal('renderFixture failure.');
           expect(error).to.have.property('column');
-          expect(error.column).to.be.number;
+          expect(error.column).to.be.a('number');
           expect(error).to.have.property('line');
-          expect(error.line).to.be.number;
+          expect(error.line).to.be.a('number');
           expect(error).to.have.property('file');
-          expect(error.file).to.be.string;
+          expect(error.file).to.be.a('string');
           expect(error).to.have.property('status');
-          expect(error.status).to.be.number;
+          expect(error.status).to.be.a('number');
         });
       });
 
@@ -487,7 +486,6 @@ describe('sassy-test', function() {
         return this.sassyTest.renderFixture('renderFixture/failureNoOutput', {}).then(function(result) {
           expect(result).to.not.exist;
         }).catch(function(error) {
-          expect(error).to.be.error;
           expect(error.message).to.equal('renderFixture failure, not an output error.');
           expect(error).to.not.have.property('code');
         });
@@ -498,7 +496,7 @@ describe('sassy-test', function() {
           expect(error).to.not.exist;
         }).then(function(result) {
           expect(result).to.exist;
-          expect(result.expectedOutput).to.be.string;
+          expect(result.expectedOutput).to.be.a('string');
           expect(result.expectedOutput).to.equal('.test {\n  content: "renderFixture() test"; }\n');
         });
       });
