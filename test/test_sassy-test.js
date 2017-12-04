@@ -5,7 +5,7 @@ var expect = require('chai').expect,
   Promise = require('bluebird'),
   sass = require('node-sass');
 
-var SassyTest = require('../src/sassy-test.js');
+var SassyTest = require('../lib/sassy-test.js');
 
 describe('sassy-test', function() {
   describe('API', function() {

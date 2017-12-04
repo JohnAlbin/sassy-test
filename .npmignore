@@ -1,6 +1,5 @@
 coverage/
 docs/
-src/
 test/
 .babelrc
 .eslint*

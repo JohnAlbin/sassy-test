@@ -1,9 +1,6 @@
 # Ignore any installed node modules.
 **/node_modules/**
 
-# Ignore the built files in lib/.
-lib/**
-
 # Ignore the docs pages.
 docs/**
 
