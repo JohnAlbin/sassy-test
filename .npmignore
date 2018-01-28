@@ -1,9 +1,8 @@
+.nyc_output/
 coverage/
 docs/
 test/
-.babelrc
 .eslint*
-.nyc_output/
 .travis.yml
 Makefile
 package-lock.json
