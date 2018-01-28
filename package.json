@@ -30,7 +30,7 @@
     "posttest": "eslint .",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "report": "nyc --reporter=html mocha",
-    "version": "auto-changelog -p && make docs && git add CHANGELOG.md docs"
+    "version": "auto-changelog --package --commit-limit false && make docs && git add CHANGELOG.md docs"
   },
   "dependencies": {
     "bluebird": "^3.3.4",
