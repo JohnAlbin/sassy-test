@@ -30,13 +30,14 @@
     "posttest": "eslint .",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "report": "nyc --reporter=html mocha",
-    "docs": "make docs"
+    "version": "auto-changelog -p && make docs && git add CHANGELOG.md docs"
   },
   "dependencies": {
     "bluebird": "^3.3.4",
     "node-sass": "^3.3.2 || ^4.0.0"
   },
   "devDependencies": {
+    "auto-changelog": "^1.4.0",
     "chai": "^4.1.2",
     "coveralls": "^3.0.0",
     "eslint": "^4.12.1",
