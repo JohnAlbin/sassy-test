@@ -1,6 +1,6 @@
 {
   "name": "sassy-test",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "A simple helper utility for creating unit tests of Sass modules. Works great with mocha or jasmine.",
   "homepage": "https://github.com/JohnAlbin/sassy-test",
   "bugs": {
