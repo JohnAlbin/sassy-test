@@ -35,7 +35,7 @@
     "version": "auto-changelog --commit-limit false --package && make docs && git add CHANGELOG.md docs"
   },
   "dependencies": {
-    "bluebird": "^3.3.4",
+    "bluebird": "^3.5.5",
     "node-sass": "^3.3.2 || ^4.0.0"
   },
   "devDependencies": {
