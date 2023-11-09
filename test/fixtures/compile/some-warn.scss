@@ -1,0 +1,5 @@
+// A file to test compile()
+.test {
+  @warn "compile() test warning";
+  content: "compile() test";
+}

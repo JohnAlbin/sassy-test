@@ -1,21 +1,21 @@
-'use strict';
+import { expect } from 'chai';
+import path from 'node:path';
+import * as sass from 'sass';
+import SassyTest from '../lib/sassy-test.js';
+import { fileURLToPath } from 'node:url';
 
-var expect = require('chai').expect,
-  path = require('path'),
-  Promise = require('bluebird'),
-  sass = require('node-sass');
-
-var SassyTest = require('../lib/sassy-test.js');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 describe('sassy-test', function() {
   describe('API', function() {
     ['configurePaths',
       'fixture',
-      'render',
-      'renderFixture'
+      'compile',
+      'compileString',
+      'compileFixture'
     ].forEach(function(method) {
       it('has ' + method + '() method', function(done) {
-        var sassyTest = new SassyTest();
+        const sassyTest = new SassyTest();
         expect(sassyTest).to.have.property(method);
         expect(sassyTest[method]).to.be.a('function');
         done();
@@ -25,45 +25,37 @@ describe('sassy-test', function() {
 
   describe('SassyTest constructor', function() {
     it('should initialize the object', function(done) {
-      var obj = new SassyTest();
+      const obj = new SassyTest();
       expect(obj).to.have.property('paths');
       expect(obj.paths).to.have.property('fixtures');
       expect(obj.paths.fixtures).to.equal(path.join(__dirname, '../../../', 'test/fixtures'));
-      expect(obj.paths).to.have.property('includePaths');
+      expect(obj.paths).to.have.property('loadPaths');
       done();
     });
 
     it('should initialize the given data', function(done) {
-      var obj = new SassyTest({
+      const obj = new SassyTest({
         fixtures: 'example',
-        includePaths: ['include-example']
+        loadPaths: ['include-example']
       });
       expect(obj.paths.fixtures).to.equal('example');
-      expect(obj.paths.includePaths).to.deep.equal(['include-example']);
+      expect(obj.paths.loadPaths).to.deep.equal(['include-example']);
       done();
     });
   });
 
   describe('.configurePaths()', function() {
     it('should not override the default fixtures path', function(done) {
-      var sassyTest = new SassyTest();
+      const sassyTest = new SassyTest();
       expect(path.relative(
         path.join(__dirname, '../../../'),
         sassyTest.paths.fixtures
-      )).to.equal('test/fixtures');
-
-      // Simulate sassy-test being installed in node-modules/sassy-test/.
-      var sassyTestMock = require('./fixtures/node_modules/sassy-test-mock');
-
-      expect(path.relative(
-        path.join(__dirname, '../'),
-        sassyTestMock.paths.fixtures
       )).to.equal('test/fixtures');
       done();
     });
 
     it('should set the fixtures path', function(done) {
-      var sassyTest = new SassyTest();
+      const sassyTest = new SassyTest();
       sassyTest.configurePaths({
         fixtures: 'a/path'
       });
@@ -71,22 +63,22 @@ describe('sassy-test', function() {
       done();
     });
 
-    it('should set the includePaths path', function(done) {
-      var sassyTest = new SassyTest();
+    it('should set the loadPaths path', function(done) {
+      const sassyTest = new SassyTest();
       sassyTest.configurePaths({
-        includePaths: ['b/path']
+        loadPaths: ['b/path']
       });
-      expect(sassyTest.paths.includePaths[0]).to.equal('b/path');
+      expect(sassyTest.paths.loadPaths[0]).to.equal('b/path');
       done();
     });
 
-    it('should not reset to the default value a previously set includePaths path', function(done) {
-      var sassyTest = new SassyTest();
+    it('should not reset to the default value a previously set loadPaths path', function(done) {
+      const sassyTest = new SassyTest();
       sassyTest.configurePaths({
-        includePaths: ['c/path']
+        loadPaths: ['c/path']
       });
       sassyTest.configurePaths({});
-      expect(sassyTest.paths.includePaths[0]).to.equal('c/path');
+      expect(sassyTest.paths.loadPaths[0]).to.equal('c/path');
       done();
     });
   });
@@ -115,184 +107,198 @@ describe('sassy-test', function() {
     });
   });
 
-  describe('.render()', function() {
+  describe('.compile()', function() {
     before(function(done) {
       this.sassyTest = new SassyTest({
         fixtures: path.join(__dirname, 'fixtures'),
-        includePaths: [path.join(__dirname, 'fixtures/my-sass-library')]
+        loadPaths: [path.join(__dirname, 'fixtures/my-sass-library')]
       });
       done();
     });
 
-    it('should be able to @import from the fixtures directory', function(done) {
-      this.sassyTest.render({
-        data: '@import "init";\n.test {\n  content: $var-from-init;\n}'
-      }, function(error, result) {
-        expect(result.css).to.equal('.test {\n  content: "a variable from fixtures/_init.scss"; }\n');
-        done();
-      });
-    });
-
-    it('should be able to @import from the includePaths directory', function(done) {
-      this.sassyTest.render({
-        data: '@import "my-sass-library";\n@include my-sass-imported();'
-      }, function(error, result) {
-        expect(result.css).to.equal('.test {\n  content: "my-sass-imported"; }\n');
-        done();
-      });
-    });
-
-    it('should fail to @import if no includePaths directory specified', function(done) {
-      var originalIncludePaths = this.sassyTest.paths.includePaths,
-        self = this;
-      this.sassyTest.paths.includePaths = [];
-      this.sassyTest.render({
-        data: '@import "my-sass-library";'
-      }, function(error, result) {
-        expect(error).to.exist;
-        expect(result).to.not.exist;
-        // Restore the original value.
-        self.sassyTest.paths.includePaths = originalIncludePaths;
-        done();
-      });
-    });
-
-    it('should pass its options to node-sass’s render()', function(done) {
-      this.sassyTest.render({
-        data: '@import "my-sass-library";\n@include my-sass-imported();',
-        outputStyle: 'compressed'
-      }, function(error, result) {
-        expect(result.css).to.equal('.test{content:"my-sass-imported"}\n');
-        done();
-      });
-    });
-
-    it('should not override functions passed to it', function(done) {
-      this.sassyTest.render({
-        data: '.test { content: test-function(MYTEST); }',
-        outputStyle: 'compressed',
-        functions: {
-          'test-function($val)': function(val) {
-            return sass.types.String('"You have called test-function(' + val.getValue() + ')."');
-          }
-        }
-      }, function(error, result) {
-        expect(result.css).to.equal('.test{content:"You have called test-function(MYTEST)."}\n');
-        done();
-      });
-    });
-
-    it('should return the node-sass result object', function(done) {
-      this.sassyTest.render({
-        data: '@import "my-sass-library";\n@include my-sass-imported();'
-      }, function(error, result) {
+    it('should return a Promise', async function() {
+      const obj = this.sassyTest.compileString(
+        '@import "my-sass-library";\n@include my-sass-imported();'
+      );
+      expect(obj).to.be.instanceof(Promise);
+      let result;
+      try {
+        result = await obj;
+      } catch (error) {
         expect(error).to.not.exist;
-        expect(result).to.be.an('object');
-        expect(result).to.have.property('css');
-        expect(result.css).to.be.a('string');
-        expect(result).to.have.property('map');
-        expect(result.map).to.not.exist;
-        expect(result).have.property('stats');
-        expect(result.stats).to.be.an('object');
-        expect(result).to.have.property('warn');
-        expect(result.warn).to.be.an('array');
-        expect(result).to.have.property('debug');
-        expect(result.debug).to.be.an('array');
-        done();
-      });
+      }
+      expect(result.css).to.equal('.test {\n  content: "my-sass-imported";\n}');
     });
 
-    it('should return the node-sass error', function(done) {
-      this.sassyTest.render({
-        data: '@import "non-existant-sass-library";'
-      }, function(error, result) {
-        expect(result).to.not.exist;
+    it('should be able to @import from the fixtures directory', async function() {
+      let result;
+      try {
+        result = await this.sassyTest.compileString(
+          '@import "init";\n.test {\n  content: $var-from-init;\n}'
+        );
+      } catch (error) {
+        expect(error).to.not.exist;
+      }
+      expect(result.css).to.equal('.test {\n  content: "a variable from fixtures/_init.scss";\n}');
+    });
+
+    it('should be able to @import from the loadPaths directory', async function() {
+      let result;
+      try {
+        result = await this.sassyTest.compileString(
+          '@import "my-sass-library";\n@include my-sass-imported();'
+        );
+      } catch (error) {
+        expect(error).to.not.exist;
+      }
+      expect(result.css).to.equal('.test {\n  content: "my-sass-imported";\n}');
+    });
+
+    it('should fail to @import if no loadPaths directory specified', async function() {
+      const originalLoadPaths = this.sassyTest.paths.loadPaths,
+        self = this;
+      this.sassyTest.paths.loadPaths = [];
+      let result;
+      try {
+        result = await this.sassyTest.compileString(
+          '@import "my-sass-library";'
+        );
+      } catch (error) {
+        expect(error).to.exist;
+      }
+      expect(result).to.not.exist;
+      // Restore the original value.
+      self.sassyTest.paths.loadPaths = originalLoadPaths;
+    });
+
+    it('should pass its options to sass’s compile()', async function() {
+      let result;
+      try {
+        result = await this.sassyTest.compileString(
+          '@import "my-sass-library";\n@include my-sass-imported();',
+          {
+            style: 'compressed'
+          }
+        );
+      } catch (error) {
+        expect(error).to.not.exist;
+      }
+      expect(result.css).to.equal('.test{content:"my-sass-imported"}');
+    });
+
+    it('should not override functions passed to it', async function() {
+      let result;
+      try {
+        result = await this.sassyTest.compileString(
+          '.test { content: test-function(MYTEST); }',
+          {
+            style: 'compressed',
+            functions: {
+              'test-function($val)': function(args) {
+                return new sass.SassString(`You have called test-function(${args[0].assertString('val')}).`);
+              }
+            }
+          }
+        );
+      } catch (error) {
+        expect(error).to.not.exist;
+      }
+      expect(result.css).to.equal('.test{content:"You have called test-function(MYTEST)."}');
+    });
+
+    it('should return the sass result object', async function() {
+      let result;
+      try {
+        result = await this.sassyTest.compileString(
+          '@import "my-sass-library";\n@include my-sass-imported();'
+        );
+      } catch (error) {
+        expect(error).to.not.exist;
+      }
+      expect(result).to.be.an('object');
+      expect(result).to.have.property('css');
+      expect(result.css).to.be.a('string');
+      expect(result).to.not.have.property('sourceMap');
+      expect(result).to.have.property('warn');
+      expect(result.warn).to.be.an('array');
+      expect(result).to.have.property('debug');
+      expect(result.debug).to.be.an('array');
+    });
+
+    it('should return the sass exception', async function() {
+      let result;
+      try {
+        result = await this.sassyTest.compileString(
+          '@import "non-existant-sass-library";'
+        );
+      } catch (error) {
         expect(error).to.be.an('error');
         expect(error).to.have.property('message');
         expect(error.message).to.be.a('string');
-        expect(error).to.have.property('column');
-        expect(error.column).to.be.a('number');
-        expect(error).to.have.property('line');
-        expect(error.line).to.be.a('number');
-        expect(error).to.have.property('file');
-        expect(error.file).to.be.a('string');
-        expect(error).to.have.property('status');
-        expect(error.status).to.be.a('number');
-        done();
-      });
+        expect(error).to.have.property('span');
+        expect(error.span.start.column).to.be.a('number');
+        expect(error.span.start.line).to.be.a('number');
+        expect(error.span.start.offset).to.be.a('number');
+        expect(error.span.end.column).to.be.a('number');
+        expect(error.span.end.line).to.be.a('number');
+        expect(error.span.end.offset).to.be.a('number');
+        expect(error.span.url).to.be.a('null');
+      }
+      expect(result).to.not.exist;
     });
 
-    it('should convert the sourcemap into an object', function(done) {
-      this.sassyTest.render({
-        file: this.sassyTest.fixture('render/some-file.scss'),
-        sourceMap: true,
-        outFile: this.sassyTest.fixture('render/output.css')
-      }, function(error, result) {
+    it('should have a sourcemap object', async function() {
+      let result;
+      try {
+        result = await this.sassyTest.compile(
+          this.sassyTest.fixture('compile/some-file.scss'),
+          { sourceMap: true }
+        );
+      } catch (error) {
         expect(error).to.not.exist;
-        expect(result.map).to.be.an('object');
-        done();
-      });
+      }
+      expect(result.sourceMap).to.be.an('object');
     });
 
-    it('should throw an error if not given an options object', function(done) {
-      var self = this;
-      this.sassyTest.render('', function(error, result) {
-        expect(result).to.not.exist;
+    it('should throw an error if not given an options object', async function() {
+      let result;
+      try {
+        result = await this.sassyTest.compileString('', '');
+      } catch (error) {
         expect(error).to.be.an('error');
-        expect(error.message).to.equal('Options parameter of render method must be an object.');
-
-        // Make render() return a Promise.
-        return self.sassyTest.render('').then(function(result) {
-          expect(result).to.not.exist;
-          done();
-        }).catch(function(error) {
-          expect(error).to.be.an('error');
-          expect(error.message).to.equal('Options parameter of render method must be an object.');
-          done();
-        });
-      });
+        expect(error.message).to.equal('Options parameter of compile method must be an object.');
+      }
+      expect(result).to.not.exist;
     });
 
-    it('should capture @warn messages', function(done) {
-      this.sassyTest.render({
-        file: this.sassyTest.fixture('render/some-warn.scss')
-      }, function(error, result) {
+    it('should capture @warn messages', async function() {
+      let result;
+      try {
+        result = await this.sassyTest.compile(
+          this.sassyTest.fixture('compile/some-warn.scss')
+        );
+      } catch (error) {
         expect(error).to.not.exist;
-        expect(result.warn[0]).to.equal('render() test warning');
-        done();
-      });
+      }
+      expect(result.warn[0]).to.equal('compile() test warning');
     });
 
-    it('should capture @debug messages', function(done) {
-      this.sassyTest.render({
-        file: this.sassyTest.fixture('render/some-debug.scss')
-      }, function(error, result) {
+    it('should capture @debug messages', async function() {
+      let result;
+      try {
+        result = await this.sassyTest.compile(
+          this.sassyTest.fixture('compile/some-debug.scss')
+        );
+      } catch (error) {
         expect(error).to.not.exist;
-        expect(result.debug[0]).to.equal('render() test debug');
-        done();
-      });
-    });
-
-    it('should return a Promise if not given a callback', function() {
-      var obj = this.sassyTest.render({
-        data: '@import "my-sass-library";\n@include my-sass-imported();'
-      });
-      expect(obj).to.be.instanceof(Promise);
-      return obj.then(function(result) {
-        expect(result.css).to.equal('.test {\n  content: "my-sass-imported"; }\n');
-        expect(result).to.have.property('warn');
-        expect(result.warn).to.be.an('array');
-        expect(result).to.have.property('debug');
-        expect(result.debug).to.be.an('array');
-      }).catch(function(error) {
-        expect(error).to.not.exist;
-      });
+      }
+      expect(result.debug[0]).to.equal('compile() test debug');
     });
   });
 
   describe('.assertResult()', function() {
     it('should throw an error if result.expectedOutputFileError exists', function(done) {
-      var sassyTest = new SassyTest(),
+      const sassyTest = new SassyTest(),
         result = {
           sassError: null,
           expectedOutputFileError: new Error('Test output error'),
@@ -304,220 +310,137 @@ describe('sassy-test', function() {
     });
 
     it('should throw an error if result.css does not match result.expectedOutput', function(done) {
-      var sassyTest = new SassyTest(),
+      const sassyTest = new SassyTest(),
         result = {
           sassError: null,
           expectedOutputFileError: null,
           css: '.output {}',
           expectedOutput: '.output.does-not-match {}'
         };
-      expect(sassyTest.assertResult.bind(null, result)).to.throw(Error, '\'.output {}\' === \'.output.does-not-match {}\'');
+      expect(sassyTest.assertResult.bind(null, result)).to.throw(Error, 'Expected values to be strictly equal');
       done();
     });
   });
 
-  describe('.renderFixture()', function() {
+  describe('.compileFixture()', function() {
     before(function(done) {
       this.sassyTest = new SassyTest({
         fixtures: path.join(__dirname, 'fixtures'),
-        includePaths: [path.join(__dirname, 'fixtures/my-sass-library')]
+        loadPaths: [path.join(__dirname, 'fixtures/my-sass-library')]
       });
       // Turn off the assertions to prevent errors from breaking these tests.
       this.sassyTest.assertResult = function() {};
       done();
     });
 
-    it('should render the input.scss file of the given fixtures directory', function(done) {
-      this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result) {
-        expect(error).to.not.exist;
-        expect(result.css).to.be.a('string');
-        expect(result.css).to.equal('.test {\n  content: "renderFixture() test"; }\n');
-        expect(result.expectedOutput).to.exist;
-        done();
-      });
+    it('should return a Promise', function() {
+      const obj = this.sassyTest.compileFixture('compileFixture/success', {});
+      expect(obj).to.be.instanceof(Promise);
+      return obj;
     });
 
-    it('should create a sourcemap', function(done) {
-      this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result) {
+    it('should compile the input.scss file of the given fixtures directory', async function() {
+      let result;
+      try {
+        result = await this.sassyTest.compileFixture('compileFixture/success', {});
+      } catch (error) {
         expect(error).to.not.exist;
-        expect(result.expectedOutput).to.exist;
-        expect(result.map).to.be.an('object');
-        expect(result.map.file).to.equal('output.css');
-        expect(result.map.sources).to.be.an('array');
-        expect(result.map.sources).to.deep.equal(['input.scss']);
-        done();
-      });
+      }
+      expect(result.css).to.be.a('string');
+      expect(result.css).to.equal('.test {\n  content: "compileFixture() test";\n}');
+      expect(result.expectedOutput).to.exist;
     });
 
-    it('should return the node-sass result object', function(done) {
-      this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result) {
+    it('should create a sourcemap', async function() {
+      const fixture = 'compileFixture/success';
+      const url = `file://${this.sassyTest.fixture('compileFixture/success')}/input.scss`;
+      let result;
+      try {
+        result = await this.sassyTest.compileFixture(fixture);
+      } catch (error) {
         expect(error).to.not.exist;
-        expect(result.expectedOutput).to.exist;
-        expect(result).to.be.an('object');
-        expect(result).to.have.property('css');
-        expect(result.css).to.be.a('string');
-        expect(result).to.have.property('map');
-        expect(result.map).to.be.an('object');
-        expect(result).to.have.property('stats');
-        expect(result.stats).to.be.an('object');
-        done();
-      });
+      }
+      expect(result.expectedOutput).to.exist;
+      expect(result.sourceMap).to.be.an('object');
+      expect(result.sourceMap.file).to.be.undefined;
+      expect(result.sourceMap.sources).to.be.an('array');
+      expect(result.sourceMap.sources).to.deep.equal([url]);
     });
 
-    it('should return the node-sass error', function(done) {
-      this.sassyTest.renderFixture('renderFixture/failureSass', {}, function(error, result) {
-        expect(result).to.not.exist;
+    it('should return the sass result object', async function() {
+      let result;
+      try {
+        result = await this.sassyTest.compileFixture('compileFixture/success');
+      } catch (error) {
+        expect(error).to.not.exist;
+      }
+      expect(result.expectedOutput).to.exist;
+      expect(result).to.be.an('object');
+      expect(result).to.have.property('css');
+      expect(result.css).to.be.a('string');
+      expect(result).to.have.property('sourceMap');
+      expect(result.sourceMap).to.be.an('object');
+    });
+
+    it('should return the sass exception', async function() {
+      let result;
+      try {
+        result = await this.sassyTest.compileFixture('compileFixture/failureSass');
+      } catch (error) {
         expect(error).to.be.an('error');
         expect(error).to.have.property('message');
         expect(error.message).to.be.a('string');
-        expect(error.message).to.equal('renderFixture failure.');
-        expect(error).to.have.property('column');
-        expect(error.column).to.be.a('number');
-        expect(error).to.have.property('line');
-        expect(error.line).to.be.a('number');
-        expect(error).to.have.property('file');
-        expect(error.file).to.be.a('string');
-        expect(error).to.have.property('status');
-        expect(error.status).to.be.a('number');
-        done();
-      });
+        expect(error.message).to.include('compileFixture failure.');
+        expect(error).to.have.property('span');
+        expect(error.span.start.column).to.be.a('number');
+      }
+      expect(result).to.not.exist;
     });
 
-    it('should ignore the output error and return the node-sass error', function(done) {
-      this.sassyTest.renderFixture('renderFixture/failureNoOutput', {}, function(error, result) {
-        expect(result).to.not.exist;
+    it('should ignore the output error and return the sass exception', async function() {
+      let result;
+      try {
+        result = await this.sassyTest.compileFixture('compileFixture/failureNoOutput');
+      } catch (error) {
         expect(error).to.be.an('error');
-        expect(error.message).to.equal('renderFixture failure, not an output error.');
+        expect(error.message).to.include('compileFixture failure, not an output error.');
         expect(error).to.not.have.property('code');
-        done();
-      });
+      }
+      expect(result).to.not.exist;
     });
 
-    it('should read the output.css file of the given fixtures directory', function(done) {
-      this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result) {
+    it('should read the output.css file of the given fixtures directory', async function() {
+      let result;
+      try {
+        result = await this.sassyTest.compileFixture('compileFixture/success');
+      } catch (error) {
         expect(error).to.not.exist;
-        expect(result).to.exist;
-        expect(result.expectedOutput).to.be.a('string');
-        expect(result.expectedOutput).to.equal('.test {\n  content: "renderFixture() test"; }\n');
-        done();
-      });
+      }
+      expect(result).to.exist;
+      expect(result.expectedOutput).to.be.a('string');
+      expect(result.expectedOutput).to.equal('.test {\n  content: "compileFixture() test";\n}');
     });
 
-    it('should report an error if it cannot find output.css', function(done) {
-      this.sassyTest.renderFixture('renderFixture/missingOutput', {}, function(error, result) {
-        expect(result.expectedOutputFileError).to.exist;
-        expect(result.expectedOutputFileError.code).to.equal('ENOENT');
-        done();
-      });
-    });
-
-    it('should compare the expected result and the actual result', function(done) {
-      this.sassyTest.renderFixture('renderFixture/success', {}, function(error, result) {
+    it('should report an error if it cannot find output.css', async function() {
+      let result;
+      try {
+        result = await this.sassyTest.compileFixture('compileFixture/missingOutput');
+      } catch (error) {
         expect(error).to.not.exist;
-        expect(result).to.exist;
-        expect(result.css).to.equal(result.expectedOutput);
-        done();
-      });
+      }
+      expect(result.expectedOutputFileError).to.exist;
+      expect(result.expectedOutputFileError.code).to.equal('ENOENT');
     });
 
-    describe('if not given a callback function', function() {
-      it('should return a Promise', function() {
-        var obj = this.sassyTest.renderFixture('renderFixture/success', {});
-        expect(obj).to.be.instanceof(Promise);
-        return obj;
-      });
-
-      it('should render the input.scss file of the given fixtures directory', function() {
-        return this.sassyTest.renderFixture('renderFixture/success', {}).catch(function(error) {
-          expect(error).to.not.exist;
-        }).then(function(result) {
-          expect(result.css).to.be.a('string');
-          expect(result.css).to.equal('.test {\n  content: "renderFixture() test"; }\n');
-          expect(result.expectedOutput).to.exist;
-        });
-      });
-
-      it('should create a sourcemap', function() {
-        return this.sassyTest.renderFixture('renderFixture/success').catch(function(error) {
-          expect(error).to.not.exist;
-        }).then(function(result) {
-          expect(result.expectedOutput).to.exist;
-          expect(result.map).to.be.an('object');
-          expect(result.map.file).to.equal('output.css');
-          expect(result.map.sources).to.be.an('array');
-          expect(result.map.sources).to.deep.equal(['input.scss']);
-        });
-      });
-
-      it('should return the node-sass result object', function() {
-        return this.sassyTest.renderFixture('renderFixture/success', {}).catch(function(error) {
-          expect(error).to.not.exist;
-        }).then(function(result) {
-          expect(result.expectedOutput).to.exist;
-          expect(result).to.be.an('object');
-          expect(result).to.have.property('css');
-          expect(result.css).to.be.a('string');
-          expect(result).to.have.property('map');
-          expect(result.map).to.be.an('object');
-          expect(result).to.have.property('stats');
-          expect(result.stats).to.be.an('object');
-        });
-      });
-
-      it('should return the node-sass error', function() {
-        return this.sassyTest.renderFixture('renderFixture/failureSass', {}).then(function(result) {
-          expect(result).to.not.exist;
-        }).catch(function(error) {
-          expect(error).to.have.property('message');
-          expect(error.message).to.be.a('string');
-          expect(error.message).to.equal('renderFixture failure.');
-          expect(error).to.have.property('column');
-          expect(error.column).to.be.a('number');
-          expect(error).to.have.property('line');
-          expect(error.line).to.be.a('number');
-          expect(error).to.have.property('file');
-          expect(error.file).to.be.a('string');
-          expect(error).to.have.property('status');
-          expect(error.status).to.be.a('number');
-        });
-      });
-
-      it('should ignore the output error and return the node-sass error', function() {
-        return this.sassyTest.renderFixture('renderFixture/failureNoOutput', {}).then(function(result) {
-          expect(result).to.not.exist;
-        }).catch(function(error) {
-          expect(error.message).to.equal('renderFixture failure, not an output error.');
-          expect(error).to.not.have.property('code');
-        });
-      });
-
-      it('should read the output.css file of the given fixtures directory', function() {
-        return this.sassyTest.renderFixture('renderFixture/success', {}).catch(function(error) {
-          expect(error).to.not.exist;
-        }).then(function(result) {
-          expect(result).to.exist;
-          expect(result.expectedOutput).to.be.a('string');
-          expect(result.expectedOutput).to.equal('.test {\n  content: "renderFixture() test"; }\n');
-        });
-      });
-
-      it('should report an error if it cannot find output.css', function() {
-        return this.sassyTest.renderFixture('renderFixture/missingOutput', {}).catch(function(error) {
-          expect(error).to.not.exist;
-        }).then(function(result) {
-          expect(result.expectedOutputFileError).to.exist;
-          expect(result.expectedOutputFileError.code).to.equal('ENOENT');
-        });
-      });
-
-      it('should compare the expected result and the actual result', function() {
-        return this.sassyTest.renderFixture('renderFixture/success', {}).catch(function(error) {
-          expect(error).to.not.exist;
-        }).then(function(result) {
-          expect(result).to.exist;
-          expect(result.css).to.equal(result.expectedOutput);
-        });
-      });
+    it('should compare the expected result and the actual result', async function() {
+      let result;
+      try {
+        result = await this.sassyTest.compileFixture('compileFixture/success');
+      } catch (error) {
+        expect(error).to.not.exist;
+      }
+      expect(result).to.exist;
+      expect(result.css).to.equal(result.expectedOutput);
     });
   });
 });
