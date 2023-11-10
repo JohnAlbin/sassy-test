@@ -141,7 +141,7 @@ describe('@import "mymodule";', function() {
 });
 ```
 
-[Full documentation of Sassy Test’s JavaScript API](https://johnalbin.github.io/sassy-test) is available online.
+[Full documentation of Sassy Test’s JavaScript API](https://johnalbin.github.io/sassy-test/) is available online.
 
 ## Development
 
