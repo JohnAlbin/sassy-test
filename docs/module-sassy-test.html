@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>sassy-test JavaScript API: Module: sassy-test</title>
+    <title>sassy-test JavaScript API: Class: module:sassy-test</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: sassy-test</h1>
+    <h1 class="page-title">Class: module:sassy-test</h1>
 
     
 
@@ -28,8 +28,14 @@
 
 <header>
     
+        <h2><span class="attribs"><span class="type-signature"></span></span>module:sassy-test<span class="signature">(config<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            
+            <div class="class-description"><p>A SassyTest object represents test helper for testing sass modules.</p>
+<p>This class is normally accessed via the
+<a href="module-sassy-test.html"><code>sassy-test</code></a> module:</p>
+<pre class="prettyprint source"><code>import SassyTest from 'sassy-test';
+const sassyTest = new SassyTest();
+</code></pre></div>
         
     
 </header>
@@ -38,24 +44,101 @@
     <div class="container-overview">
     
         
-            <div class="description"><p>A sassy-test helper object can be created with:</p>
-<pre class="prettyprint source"><code>// Import the SassyTest class.
-var SassyTest = require('sassy-test');
-// Create a SassyTest object.
-var sassyTest = new SassyTest();</code></pre></div>
+
+    
+    <h2>Constructor</h2>
+    
+
+    
+    <h4 class="name" id="module:sassy-test"><span class="type-signature"></span>new module:sassy-test<span class="signature">(config<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Creates a SassyTest object.</p>
+<p>If the optional initialization object is given to the constructor, it will
+be passed to the <code>configurePaths()</code> method.</p>
+<p>For example, this:</p>
+<pre class="prettyprint source"><code>import SassyTest from 'sassy-test';
+const sassyTest = new SassyTest({loadPaths: ['/my/path/to/library']});
+</code></pre>
+<p>is equivalent to:</p>
+<pre class="prettyprint source"><code>import SassyTest from 'sassy-test';
+const sassyTest = new SassyTest();
+sassyTest.configurePaths({loadPaths: ['/my/path/to/library']});
+</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
         
 
         
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>config</code></td>
             
 
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
 
 
+            
+            </td>
 
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
 
+                
+                </td>
+            
 
+            
 
+            <td class="description last"><p>Optional initialization object.</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
 
 
@@ -91,7 +174,7 @@ var sassyTest = new SassyTest();</code></pre></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line10">line 10</a>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line28">line 28</a>
     </li></ul></dd>
     
 
@@ -119,7 +202,8 @@ var sassyTest = new SassyTest();</code></pre></div>
 
 
 
-        
+
+
     
     </div>
 
@@ -128,12 +212,105 @@ var sassyTest = new SassyTest();</code></pre></div>
     
 
     
-        <h3 class="subsection-title">Classes</h3>
 
-        <dl>
-            <dt><a href="module-sassy-test-SassyTest.html">SassyTest</a></dt>
-            <dd></dd>
-        </dl>
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="assertResult"><span class="type-signature"></span>assertResult<span class="signature">(result)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Runs assertions against <code>compileFixture()</code>'s result object.</p>
+<p>The <code>compileFixture()</code> automatically calls this method to run a standard set
+of assertions against the result object before it is returned. If no Sass
+error occurs, <code>assertResult()</code> checks for an error when reading the
+output.css file using <code>assert.ifError()</code> and compares the results to the
+expected output using <code>assert.strictEqual()</code>.</p>
+<p>If the SassyTest user chooses, this method can be overridden to perform
+different assertions.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>result</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The result object returned by <code>compileFixture()</code>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
     
 
     
@@ -144,6 +321,1065 @@ var sassyTest = new SassyTest();</code></pre></div>
 
     
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line261">line 261</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="compile"><span class="type-signature"></span>compile<span class="signature">(path, options<span class="signature-attributes">nullable</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Runs sass' compile() with a light-weight wrapper.</p>
+<p>In addition to running sass' compile(), this method:</p>
+<ul>
+<li>adds the test fixtures path directory to the loadPaths</li>
+<li>ensures the loadPaths are passed to sass</li>
+</ul>
+<p>Sassy-test also adds the following properties to the sass result object:</p>
+<ul>
+<li><code>warn</code>: An array containing the output of any @warn statements.</li>
+<li><code>debug</code>: An array containing the output of any @debug statements.</li>
+</ul>
+<pre class="prettyprint source"><code>import SassyTest from 'sassy-test';
+const sassyTest = new SassyTest();
+
+describe('a test suite', function() {
+  it('should test something', function(done) {
+    const path = 'fixtures/_init.scss';
+    sassyTest.compile(path, options, function(error, result) {
+      assert.ifError(error);
+      assert.ok(result.css);
+      done();
+    });
+  });
+});
+</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The path to the file to be compiled.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                    &lt;nullable><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The options to pass to sass' compile(). For
+the full list of options, see the <a href="https://sass-lang.com/documentation/js-api/interfaces/options/">sass documentation for
+&quot;options&quot;</a>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line158">line 158</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A Promise that resolves to sass' result object or
+rejects to sass' exception object.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="compileFixture"><span class="type-signature"></span>compileFixture<span class="signature">(fixtureDirectory, options)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Compiles the test fixture and returns the result.</p>
+<p>Looks inside the specified folder in test/fixtures, compiles the input.scss
+file and reads the output.css file. Before it returns the sass result
+object, it calls <code>assertResult()</code> to run a standard set of assertions.</p>
+<p>compileFixture() does not test for errors itself; it requires the caller
+to decide if a Sass error is a test failure or not. Good Sass libraries
+should <code>@error</code> if used incorrectly and sassy-test lets you see these
+errors and assert they were the expected result.</p>
+<p>Sassy-test also adds the following properties to the sass result object:</p>
+<ul>
+<li><code>warn</code>: An array containing the output of any @warn statements.</li>
+<li><code>debug</code>: An array containing the output of any @debug statements.</li>
+<li>sassError: A sass error object which contains @error statements, if any.</li>
+<li>expectedOutput: The text of the output.css file; should match the <code>css</code>
+property provided by sass.</li>
+</ul>
+<pre class="prettyprint source"><code>import SassyTest from 'sassy-test';
+const sassyTest = new SassyTest();
+
+describe('a test suite', function() {
+  it('should test something', async function() {
+    sassyTest.compileFixture('sometest', options, function(error, result) {
+      // If there was no error, compileFixture() has already compared
+      // the compiled output of fixtures/sometest/input.scss to
+      // fixtures/sometest/output.css.
+      assert.ifError(error);
+      done();
+    });
+  });
+});
+</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fixtureDirectory</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The path (relative to the fixtures base
+directory) to the fixture to test.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The options to pass to sass' compile(). For the
+full list of options, see the <a href="https://sass-lang.com/documentation/js-api/interfaces/options/">sass documentation for
+&quot;options&quot;</a>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line313">line 313</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A Promise that resolves to sass' result object or
+rejects to sass' exception object.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="compileString"><span class="type-signature"></span>compileString<span class="signature">(string, options<span class="signature-attributes">nullable</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Runs sass' compileString() with a light-weight wrapper.</p>
+<p>In addition to running sass' compileString(), this method:</p>
+<ul>
+<li>adds the test fixtures path directory to the loadPaths</li>
+<li>ensures the loadPaths are passed to sass</li>
+</ul>
+<p>Sassy-test also adds the following properties to the sass result object:</p>
+<ul>
+<li><code>warn</code>: An array containing the output of any @warn statements.</li>
+<li><code>debug</code>: An array containing the output of any @debug statements.</li>
+</ul>
+<pre class="prettyprint source"><code>import SassyTest from 'sassy-test';
+const sassyTest = new SassyTest();
+
+describe('a test suite', function() {
+  it('should test something', async function() {
+    let result;
+    try {
+      result = sassyTest.compileString(
+        '@import &quot;init&quot;; // Imports fixtures/_init.scss.'
+        options
+      );
+    } catch (error) {
+      assert.ifError(error);
+    }
+    assert.ok(result.css);
+  });
+});
+</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>string</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The path to the file to be compiled.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                    &lt;nullable><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The options to pass to sass' compile(). For
+the full list of options, see the <a href="https://sass-lang.com/documentation/js-api/interfaces/options/">sass documentation for
+&quot;options&quot;</a>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line200">line 200</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A Promise that resolves to sass' result object or
+rejects to sass' exception object.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="configurePaths"><span class="type-signature"></span>configurePaths<span class="signature">(config)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Configures the paths needed for the sassyTest object.</p>
+<pre class="prettyprint source"><code>import SassyTest from 'sassy-test';
+const sassyTest = new SassyTest();
+sassyTest.configurePaths({
+  fixtures: '/my/path/to/fixtures',
+  loadPaths: ['/my/path/to/library']
+});
+</code></pre>
+<p>If sassy-test is installed in node_modules and your test fixtures are in
+<code>./test/fixtures</code> (relative to the root of your project), then sassy-test
+will automatically configure the <code>fixtures</code> path without you having to set
+<code>fixtures</code> with <code>configurePaths()</code>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>config</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A configuration object containing the properties:
+<code>fixtures</code> and <code>loadPaths</code>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line84">line 84</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="fixture"><span class="type-signature"></span>fixture<span class="signature">(&hellip;path)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Returns the full path to the requested test fixture.</p>
+<p>When called without any parameters, this method returns the path to the
+test fixtures directory. If one or more parameters are given, the method
+will append them to the returned path.</p>
+<pre class="prettyprint source"><code>import SassyTest from 'sassy-test';
+const sassyTest = new SassyTest();
+
+// Returns full path to the test fixtures.
+const fixturePath = sassyTest.fixture();
+// Returns full path to [fixtures]/sub-folder.
+const fixturePath = sassyTest.fixture('sub-folder');
+// Returns full path to [fixtures]/sub-folder/_file.scss.
+const fixturePath = sassyTest.fixture('sub-folder', '_file.scss');
+</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Optional paths inside the fixtures directory.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sassy-test.js.html">sassy-test.js</a>, <a href="sassy-test.js.html#line117">line 117</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The path to the requested test fixture.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
     
 
     
@@ -159,13 +1395,13 @@ var sassyTest = new SassyTest();</code></pre></div>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-sassy-test.html">sassy-test</a></li></ul><h3>Classes</h3><ul><li><a href="module-sassy-test-SassyTest.html">SassyTest</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-sassy-test.html">sassy-test</a></li></ul><h3>Classes</h3><ul><li><a href="module-sassy-test.html">sassy-test</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a>
 </footer>
 
 <script> prettyPrint(); </script>
