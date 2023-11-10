@@ -4,7 +4,6 @@ coverage/
 docs/
 test/
 .eslint*
-.travis.yml
 Makefile
 package-lock.json
 yarn.lock
