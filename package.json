@@ -21,7 +21,7 @@
     "bdd"
   ],
   "type": "module",
-  "module": "./lib/sassy-test.js",
+  "main": "./lib/sassy-test.js",
   "directories": {
     "test": "test"
   },
